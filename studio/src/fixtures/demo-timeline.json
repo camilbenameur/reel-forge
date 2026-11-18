@@ -1,0 +1,1064 @@
+{
+  "version": 1,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 462,
+  "theme": "paper",
+  "language": "en",
+  "audio": null,
+  "words": [
+    {
+      "text": "Stop!",
+      "start": 0.15,
+      "end": 0.52,
+      "emphasis": false
+    },
+    {
+      "text": "Your",
+      "start": 0.52,
+      "end": 0.85,
+      "emphasis": false
+    },
+    {
+      "text": "hook",
+      "start": 0.85,
+      "end": 1.22,
+      "emphasis": true
+    },
+    {
+      "text": "must",
+      "start": 1.22,
+      "end": 1.59,
+      "emphasis": false
+    },
+    {
+      "text": "fit",
+      "start": 1.59,
+      "end": 2,
+      "emphasis": false
+    },
+    {
+      "text": "in",
+      "start": 2,
+      "end": 2.28,
+      "emphasis": false
+    },
+    {
+      "text": "one",
+      "start": 2.28,
+      "end": 2.61,
+      "emphasis": false
+    },
+    {
+      "text": "second.",
+      "start": 2.61,
+      "end": 3.1,
+      "emphasis": false
+    },
+    {
+      "text": "Step",
+      "start": 3.24,
+      "end": 3.65,
+      "emphasis": false
+    },
+    {
+      "text": "one:",
+      "start": 3.65,
+      "end": 3.93,
+      "emphasis": false
+    },
+    {
+      "text": "you",
+      "start": 3.93,
+      "end": 4.21,
+      "emphasis": false
+    },
+    {
+      "text": "grab",
+      "start": 4.21,
+      "end": 4.66,
+      "emphasis": false
+    },
+    {
+      "text": "attention",
+      "start": 4.66,
+      "end": 5.28,
+      "emphasis": false
+    },
+    {
+      "text": "with",
+      "start": 5.28,
+      "end": 5.65,
+      "emphasis": false
+    },
+    {
+      "text": "a",
+      "start": 5.65,
+      "end": 5.93,
+      "emphasis": false
+    },
+    {
+      "text": "number",
+      "start": 5.93,
+      "end": 6.42,
+      "emphasis": true
+    },
+    {
+      "text": "upfront.",
+      "start": 6.42,
+      "end": 6.79,
+      "emphasis": false
+    },
+    {
+      "text": "Step",
+      "start": 6.93,
+      "end": 7.34,
+      "emphasis": false
+    },
+    {
+      "text": "two:",
+      "start": 7.34,
+      "end": 7.71,
+      "emphasis": false
+    },
+    {
+      "text": "you",
+      "start": 7.71,
+      "end": 7.99,
+      "emphasis": false
+    },
+    {
+      "text": "show",
+      "start": 7.99,
+      "end": 8.48,
+      "emphasis": false
+    },
+    {
+      "text": "the",
+      "start": 8.48,
+      "end": 8.85,
+      "emphasis": false
+    },
+    {
+      "text": "app,",
+      "start": 8.85,
+      "end": 9.22,
+      "emphasis": false
+    },
+    {
+      "text": "then",
+      "start": 9.22,
+      "end": 9.5,
+      "emphasis": false
+    },
+    {
+      "text": "retention",
+      "start": 9.5,
+      "end": 10.08,
+      "emphasis": true
+    },
+    {
+      "text": "climbs",
+      "start": 10.08,
+      "end": 10.53,
+      "emphasis": false
+    },
+    {
+      "text": "by",
+      "start": 10.53,
+      "end": 10.81,
+      "emphasis": false
+    },
+    {
+      "text": "40%.",
+      "start": 10.81,
+      "end": 11.09,
+      "emphasis": false
+    },
+    {
+      "text": "If",
+      "start": 11.23,
+      "end": 11.51,
+      "emphasis": false
+    },
+    {
+      "text": "this",
+      "start": 11.51,
+      "end": 11.79,
+      "emphasis": false
+    },
+    {
+      "text": "helped",
+      "start": 11.79,
+      "end": 12.07,
+      "emphasis": false
+    },
+    {
+      "text": "you,",
+      "start": 12.07,
+      "end": 12.48,
+      "emphasis": false
+    },
+    {
+      "text": "comment",
+      "start": 12.48,
+      "end": 13.02,
+      "emphasis": true
+    },
+    {
+      "text": "“guide”",
+      "start": 13.02,
+      "end": 13.43,
+      "emphasis": false
+    },
+    {
+      "text": "and",
+      "start": 13.43,
+      "end": 13.71,
+      "emphasis": false
+    },
+    {
+      "text": "it’s",
+      "start": 13.71,
+      "end": 14.08,
+      "emphasis": false
+    },
+    {
+      "text": "done.",
+      "start": 14.08,
+      "end": 14.49,
+      "emphasis": false
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.15,
+      "end": 3.1,
+      "words": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "start": 3.24,
+      "end": 6.79,
+      "words": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "start": 6.93,
+      "end": 11.09,
+      "words": [
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    },
+    {
+      "start": 11.23,
+      "end": 14.49,
+      "words": [
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "start": 0,
+      "label": "01 — the hook",
+      "counter": {
+        "label": "seconds",
+        "value": "1"
+      }
+    },
+    {
+      "start": 3.2400000000000007,
+      "label": "02 — the method",
+      "counter": {
+        "label": "steps",
+        "value": "2"
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "s1",
+      "type": "stop-stamp",
+      "start": 0.15,
+      "end": 3.2400000000000007,
+      "props": {
+        "item": {
+          "title": "Your hook",
+          "subtitle": "lasts one second",
+          "icon": "camera"
+        },
+        "stamp": "STOP"
+      },
+      "cues": {
+        "stamp": 0.15
+      }
+    },
+    {
+      "id": "s2",
+      "type": "step-card",
+      "start": 3.2400000000000007,
+      "end": 6.9300000000000015,
+      "props": {
+        "number": 1,
+        "title": "HOOK IN 1 SEC",
+        "subtitle": "A shocking number, a clear promise",
+        "illustration": "clock"
+      },
+      "cues": {
+        "enter": 3.24,
+        "illustration": 5.93
+      }
+    },
+    {
+      "id": "s3",
+      "type": "retention-graph",
+      "start": 6.9300000000000015,
+      "end": 11.229999999999999,
+      "props": {
+        "title": "retention",
+        "averageLabel": "Most reels",
+        "ownLabel": "My reel",
+        "duration": 45,
+        "drop": "−92%",
+        "hold": "94%"
+      },
+      "cues": {
+        "average": 7.99,
+        "own": 10.81
+      },
+      "theme": "night"
+    },
+    {
+      "id": "s4",
+      "type": "comment-cta",
+      "start": 11.229999999999999,
+      "end": 15.4,
+      "props": {
+        "word": "GUIDE",
+        "username": "your.account",
+        "title": "Comments",
+        "total": "1,204"
+      },
+      "cues": {
+        "enter": 12.48,
+        "word": 13.02
+      }
+    }
+  ],
+  "avatar": {
+    "visible": true,
+    "seed": 7,
+    "poses": [
+      {
+        "t": 0,
+        "pose": "wave",
+        "expression": "surprised"
+      },
+      {
+        "t": 0.85,
+        "pose": "point-up",
+        "expression": "smile"
+      },
+      {
+        "t": 3.2400000000000007,
+        "pose": "point-scene",
+        "expression": "smile"
+      },
+      {
+        "t": 6.9300000000000015,
+        "pose": "arms-open",
+        "expression": "laugh"
+      },
+      {
+        "t": 11.23,
+        "pose": "thinking",
+        "expression": "neutral"
+      },
+      {
+        "t": 12.48,
+        "pose": "point-down",
+        "expression": "wink"
+      },
+      {
+        "t": 13.71,
+        "pose": "thumbs-up",
+        "expression": "smile"
+      }
+    ],
+    "mouth": [
+      {
+        "t": 0,
+        "shape": "X"
+      },
+      {
+        "t": 0.15,
+        "shape": "B"
+      },
+      {
+        "t": 0.28,
+        "shape": "E"
+      },
+      {
+        "t": 0.49,
+        "shape": "A"
+      },
+      {
+        "t": 0.52,
+        "shape": "B"
+      },
+      {
+        "t": 0.64,
+        "shape": "E"
+      },
+      {
+        "t": 0.82,
+        "shape": "A"
+      },
+      {
+        "t": 0.85,
+        "shape": "B"
+      },
+      {
+        "t": 0.98,
+        "shape": "E"
+      },
+      {
+        "t": 1.19,
+        "shape": "A"
+      },
+      {
+        "t": 1.22,
+        "shape": "B"
+      },
+      {
+        "t": 1.35,
+        "shape": "E"
+      },
+      {
+        "t": 1.56,
+        "shape": "A"
+      },
+      {
+        "t": 1.59,
+        "shape": "B"
+      },
+      {
+        "t": 1.66,
+        "shape": "C"
+      },
+      {
+        "t": 1.79,
+        "shape": "B"
+      },
+      {
+        "t": 1.86,
+        "shape": "B"
+      },
+      {
+        "t": 1.97,
+        "shape": "A"
+      },
+      {
+        "t": 2,
+        "shape": "B"
+      },
+      {
+        "t": 2.1,
+        "shape": "C"
+      },
+      {
+        "t": 2.25,
+        "shape": "A"
+      },
+      {
+        "t": 2.28,
+        "shape": "B"
+      },
+      {
+        "t": 2.34,
+        "shape": "F"
+      },
+      {
+        "t": 2.44,
+        "shape": "B"
+      },
+      {
+        "t": 2.5,
+        "shape": "C"
+      },
+      {
+        "t": 2.58,
+        "shape": "A"
+      },
+      {
+        "t": 2.61,
+        "shape": "B"
+      },
+      {
+        "t": 2.67,
+        "shape": "C"
+      },
+      {
+        "t": 2.77,
+        "shape": "B"
+      },
+      {
+        "t": 2.83,
+        "shape": "E"
+      },
+      {
+        "t": 2.94,
+        "shape": "B"
+      },
+      {
+        "t": 3,
+        "shape": "C"
+      },
+      {
+        "t": 3.07,
+        "shape": "A"
+      },
+      {
+        "t": 3.1,
+        "shape": "X"
+      },
+      {
+        "t": 3.24,
+        "shape": "B"
+      },
+      {
+        "t": 3.29,
+        "shape": "C"
+      },
+      {
+        "t": 3.38,
+        "shape": "B"
+      },
+      {
+        "t": 3.43,
+        "shape": "D"
+      },
+      {
+        "t": 3.51,
+        "shape": "B"
+      },
+      {
+        "t": 3.56,
+        "shape": "C"
+      },
+      {
+        "t": 3.62,
+        "shape": "A"
+      },
+      {
+        "t": 3.65,
+        "shape": "B"
+      },
+      {
+        "t": 3.75,
+        "shape": "F"
+      },
+      {
+        "t": 3.9,
+        "shape": "A"
+      },
+      {
+        "t": 3.93,
+        "shape": "B"
+      },
+      {
+        "t": 4.03,
+        "shape": "F"
+      },
+      {
+        "t": 4.18,
+        "shape": "A"
+      },
+      {
+        "t": 4.21,
+        "shape": "B"
+      },
+      {
+        "t": 4.29,
+        "shape": "D"
+      },
+      {
+        "t": 4.44,
+        "shape": "B"
+      },
+      {
+        "t": 4.52,
+        "shape": "C"
+      },
+      {
+        "t": 4.63,
+        "shape": "A"
+      },
+      {
+        "t": 4.66,
+        "shape": "B"
+      },
+      {
+        "t": 4.73,
+        "shape": "D"
+      },
+      {
+        "t": 4.87,
+        "shape": "B"
+      },
+      {
+        "t": 4.94,
+        "shape": "C"
+      },
+      {
+        "t": 5.07,
+        "shape": "B"
+      },
+      {
+        "t": 5.14,
+        "shape": "E"
+      },
+      {
+        "t": 5.25,
+        "shape": "A"
+      },
+      {
+        "t": 5.28,
+        "shape": "B"
+      },
+      {
+        "t": 5.34,
+        "shape": "D"
+      },
+      {
+        "t": 5.46,
+        "shape": "B"
+      },
+      {
+        "t": 5.52,
+        "shape": "C"
+      },
+      {
+        "t": 5.62,
+        "shape": "A"
+      },
+      {
+        "t": 5.65,
+        "shape": "B"
+      },
+      {
+        "t": 5.75,
+        "shape": "F"
+      },
+      {
+        "t": 5.9,
+        "shape": "A"
+      },
+      {
+        "t": 5.93,
+        "shape": "B"
+      },
+      {
+        "t": 6.02,
+        "shape": "B"
+      },
+      {
+        "t": 6.17,
+        "shape": "B"
+      },
+      {
+        "t": 6.26,
+        "shape": "C"
+      },
+      {
+        "t": 6.39,
+        "shape": "A"
+      },
+      {
+        "t": 6.42,
+        "shape": "B"
+      },
+      {
+        "t": 6.55,
+        "shape": "E"
+      },
+      {
+        "t": 6.76,
+        "shape": "A"
+      },
+      {
+        "t": 6.79,
+        "shape": "X"
+      },
+      {
+        "t": 6.93,
+        "shape": "B"
+      },
+      {
+        "t": 6.98,
+        "shape": "C"
+      },
+      {
+        "t": 7.07,
+        "shape": "B"
+      },
+      {
+        "t": 7.12,
+        "shape": "D"
+      },
+      {
+        "t": 7.2,
+        "shape": "B"
+      },
+      {
+        "t": 7.25,
+        "shape": "C"
+      },
+      {
+        "t": 7.31,
+        "shape": "A"
+      },
+      {
+        "t": 7.34,
+        "shape": "B"
+      },
+      {
+        "t": 7.47,
+        "shape": "C"
+      },
+      {
+        "t": 7.68,
+        "shape": "A"
+      },
+      {
+        "t": 7.71,
+        "shape": "B"
+      },
+      {
+        "t": 7.81,
+        "shape": "F"
+      },
+      {
+        "t": 7.96,
+        "shape": "A"
+      },
+      {
+        "t": 7.99,
+        "shape": "B"
+      },
+      {
+        "t": 8.08,
+        "shape": "E"
+      },
+      {
+        "t": 8.23,
+        "shape": "B"
+      },
+      {
+        "t": 8.32,
+        "shape": "C"
+      },
+      {
+        "t": 8.45,
+        "shape": "A"
+      },
+      {
+        "t": 8.48,
+        "shape": "B"
+      },
+      {
+        "t": 8.61,
+        "shape": "D"
+      },
+      {
+        "t": 8.82,
+        "shape": "A"
+      },
+      {
+        "t": 8.85,
+        "shape": "B"
+      },
+      {
+        "t": 8.98,
+        "shape": "F"
+      },
+      {
+        "t": 9.19,
+        "shape": "A"
+      },
+      {
+        "t": 9.22,
+        "shape": "B"
+      },
+      {
+        "t": 9.32,
+        "shape": "D"
+      },
+      {
+        "t": 9.47,
+        "shape": "A"
+      },
+      {
+        "t": 9.5,
+        "shape": "B"
+      },
+      {
+        "t": 9.57,
+        "shape": "C"
+      },
+      {
+        "t": 9.69,
+        "shape": "B"
+      },
+      {
+        "t": 9.76,
+        "shape": "C"
+      },
+      {
+        "t": 9.89,
+        "shape": "B"
+      },
+      {
+        "t": 9.96,
+        "shape": "E"
+      },
+      {
+        "t": 10.05,
+        "shape": "A"
+      },
+      {
+        "t": 10.08,
+        "shape": "B"
+      },
+      {
+        "t": 10.16,
+        "shape": "B"
+      },
+      {
+        "t": 10.3,
+        "shape": "B"
+      },
+      {
+        "t": 10.38,
+        "shape": "C"
+      },
+      {
+        "t": 10.5,
+        "shape": "A"
+      },
+      {
+        "t": 10.53,
+        "shape": "B"
+      },
+      {
+        "t": 10.63,
+        "shape": "C"
+      },
+      {
+        "t": 10.78,
+        "shape": "A"
+      },
+      {
+        "t": 10.81,
+        "shape": "X"
+      },
+      {
+        "t": 11.06,
+        "shape": "A"
+      },
+      {
+        "t": 11.09,
+        "shape": "X"
+      },
+      {
+        "t": 11.23,
+        "shape": "B"
+      },
+      {
+        "t": 11.33,
+        "shape": "B"
+      },
+      {
+        "t": 11.48,
+        "shape": "A"
+      },
+      {
+        "t": 11.51,
+        "shape": "B"
+      },
+      {
+        "t": 11.61,
+        "shape": "D"
+      },
+      {
+        "t": 11.76,
+        "shape": "A"
+      },
+      {
+        "t": 11.79,
+        "shape": "B"
+      },
+      {
+        "t": 11.89,
+        "shape": "D"
+      },
+      {
+        "t": 12.04,
+        "shape": "A"
+      },
+      {
+        "t": 12.07,
+        "shape": "B"
+      },
+      {
+        "t": 12.14,
+        "shape": "C"
+      },
+      {
+        "t": 12.28,
+        "shape": "B"
+      },
+      {
+        "t": 12.35,
+        "shape": "B"
+      },
+      {
+        "t": 12.45,
+        "shape": "A"
+      },
+      {
+        "t": 12.48,
+        "shape": "B"
+      },
+      {
+        "t": 12.54,
+        "shape": "E"
+      },
+      {
+        "t": 12.66,
+        "shape": "B"
+      },
+      {
+        "t": 12.72,
+        "shape": "C"
+      },
+      {
+        "t": 12.84,
+        "shape": "B"
+      },
+      {
+        "t": 12.9,
+        "shape": "C"
+      },
+      {
+        "t": 12.99,
+        "shape": "A"
+      },
+      {
+        "t": 13.02,
+        "shape": "B"
+      },
+      {
+        "t": 13.09,
+        "shape": "F"
+      },
+      {
+        "t": 13.22,
+        "shape": "B"
+      },
+      {
+        "t": 13.29,
+        "shape": "C"
+      },
+      {
+        "t": 13.4,
+        "shape": "A"
+      },
+      {
+        "t": 13.43,
+        "shape": "B"
+      },
+      {
+        "t": 13.53,
+        "shape": "C"
+      },
+      {
+        "t": 13.68,
+        "shape": "A"
+      },
+      {
+        "t": 13.71,
+        "shape": "B"
+      },
+      {
+        "t": 13.84,
+        "shape": "C"
+      },
+      {
+        "t": 14.05,
+        "shape": "A"
+      },
+      {
+        "t": 14.08,
+        "shape": "B"
+      },
+      {
+        "t": 14.15,
+        "shape": "C"
+      },
+      {
+        "t": 14.29,
+        "shape": "B"
+      },
+      {
+        "t": 14.36,
+        "shape": "C"
+      },
+      {
+        "t": 14.46,
+        "shape": "A"
+      },
+      {
+        "t": 14.49,
+        "shape": "X"
+      }
+    ]
+  }
+}
