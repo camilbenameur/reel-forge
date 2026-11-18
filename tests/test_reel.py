@@ -85,3 +85,11 @@ def test_subscription_mark(root):
     reel.mark_subscription("script")
     reel.mark_subscription("script")
     assert reel.state["llm_subscription"] == ["script"] and reel.subscription
+
+
+def test_slugify_cuts_on_a_word_boundary():
+    slug = r.slugify("comment les freelances automatisent la facturation")
+    assert slug == "comment-les-freelances-automatisent-la"
+    assert len(slug) <= 48
+    assert r.slugify("x" * 60 + " tail") == "x" * 48          # no boundary to cut on: hard cut
+    assert r.slugify("a" * 47 + " b") == "a" * 47              # exact boundary

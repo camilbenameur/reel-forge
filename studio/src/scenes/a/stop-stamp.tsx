@@ -9,6 +9,7 @@ type IconKind = 'camera' | 'document' | 'bell' | 'dollar';
 interface Props {
   item: { title: string; subtitle?: string; icon?: IconKind };
   stamp: string; // STOP, ERROR, NO...
+  footnote?: string;  // mono line at the bottom of the card, default "// seen 1,000 times"
   cue?: string;        // item appearance
   cueStamp?: string;  // stamp drop
 }
@@ -93,7 +94,7 @@ const StopStamp: SceneDefinition<Props>['Component'] = ({ props, ctx }) => {
           <div style={{ fontFamily: FONTS.display, fontSize: 92, lineHeight: 1, color: s.p.cardInk, textTransform: 'uppercase', textAlign: 'center', padding: '0 30px' }}>{props.item.title}</div>
           {props.item.subtitle ? <div style={{ fontFamily: FONTS.sans, fontWeight: 600, fontSize: 40, color: s.p.muted }}>{props.item.subtitle}</div> : null}
           <div style={{ transform: 'scale(1.35)', marginTop: 34 }}><Icon kind={props.item.icon ?? 'camera'} s={s} /></div>
-          <div style={{ position: 'absolute', left: 36, bottom: 26, fontFamily: FONTS.mono, fontSize: 28, color: s.p.muted }}>// seen 1,000 times</div>
+          <div style={{ position: 'absolute', left: 36, bottom: 26, fontFamily: FONTS.mono, fontSize: 28, color: s.p.muted }}>{props.footnote ?? '// seen 1,000 times'}</div>
           <div style={{ position: 'absolute', right: 30, top: 24, width: 40, height: 40, borderRadius: 20, background: s.p.accent }} />
         </div>
       </div>
@@ -162,6 +163,7 @@ export const stopStamp: SceneDefinition<Props> = {
   exampleProps: {
     item: { title: 'Filming every reel', subtitle: '3 hours per video', icon: 'camera' },
     stamp: 'STOP',
+    footnote: '// seen 1,000 times',
   },
   cues: ['enter', 'stamp'],
   Component: StopStamp,

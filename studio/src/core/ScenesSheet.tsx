@@ -32,7 +32,7 @@ export const ScenesSheet: React.FC = () => {
       <Background night={0} />
       {scenes.map((def, i) => {
         const spec: SceneSpec = {
-          id: `planche-${def.type}`,
+          id: `sheet-${def.type}`,
           type: def.type,
           start: 0,
           end: SHEET_FRAMES_PER_SCENE / FPS,

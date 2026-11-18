@@ -23,7 +23,8 @@
             "subtitle": "perdues en une seconde",
             "icon": "camera"
           },
-          "stamp": "STOP"
+          "stamp": "STOP",
+          "footnote": "// vu 1 000 fois"
         },
         "cues": {
           "stamp": "meurent"
@@ -135,6 +136,7 @@
           "word": "GUIDE",
           "placeholder": "Ajouter un commentaire…",
           "button": "Publier",
+          "hint": "un seul mot ↓",
           "username": "ton.compte",
           "title": "Commentaires",
           "total": "1 204",

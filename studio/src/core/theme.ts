@@ -45,7 +45,7 @@ export const PALETTES: Record<Theme, Palette> = {
   },
 };
 
-// Families declared by core/fonts.ts (OFL files in public/fonts).
+// Families declared by core/fonts.tsx (OFL files in public/fonts).
 export const FONTS = {
   sans: '"Inter Tight", system-ui, sans-serif',         // captions, interface text
   serif: '"Instrument Serif", Georgia, serif',          // keywords, in italics

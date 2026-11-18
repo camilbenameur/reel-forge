@@ -15,6 +15,7 @@ interface Props {
   word: string;              // the keyword to comment, e.g. "SKILL"
   placeholder?: string;
   button?: string;          // "Post"
+  hint?: string;              // handwritten note above the input, default "one word only ↓"
   username?: string;          // author of the posted comment
   title?: string;           // "Comments"
   total?: string;           // "1,204"
@@ -95,7 +96,7 @@ const CommentCta: SceneDefinition<Props>['Component'] = ({ props, ctx }) => {
             ))}
           </div>
           <div style={{ position: 'absolute', left: 40, bottom: 176, fontFamily: FONTS.serif, fontStyle: 'italic', fontSize: 48, color: s.p.accent, opacity: posted ? 0 : fade(s.spr(t0 + 16)), transform: `rotate(-3deg) translateY(${float(s, 3, 2.2)}px)` }}>
-            one word only ↓
+            {props.hint ?? 'one word only ↓'}
           </div>
           {/* input area */}
           <div style={{ position: 'absolute', left: 36, right: 36, bottom: 30, height: 130, borderRadius: 30, border: `3px solid ${hasText ? s.p.accent : s.edge}`, display: 'flex', alignItems: 'center', gap: 20, padding: '0 22px', background: s.night ? 'rgba(255,255,255,0.05)' : '#FBFAF7' }}>
@@ -146,6 +147,7 @@ export const commentCta: SceneDefinition<Props> = {
     word: 'SKILL',
     placeholder: 'Add a comment…',
     button: 'Post',
+    hint: 'one word only ↓',
     username: 'your.account',
     title: 'Comments',
     total: '1,204',

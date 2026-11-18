@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "source": "registre",
+  "source": "registry",
   "scenes": [
     {
       "type": "api-hub",
@@ -286,6 +286,7 @@
         "word": "SKILL",
         "placeholder": "Add a comment…",
         "button": "Post",
+        "hint": "one word only ↓",
         "username": "your.account",
         "title": "Comments",
         "total": "1,204",
@@ -445,7 +446,8 @@
             "sub": "1080×1920"
           }
         ]
-      }
+      },
+      "cues": []
     },
     {
       "type": "keys",
@@ -703,7 +705,8 @@
           "subtitle": "3 hours per video",
           "icon": "camera"
         },
-        "stamp": "STOP"
+        "stamp": "STOP",
+        "footnote": "// seen 1,000 times"
       },
       "cues": [
         "enter",
@@ -736,7 +739,8 @@
             "detail": "2,900 followers"
           }
         ]
-      }
+      },
+      "cues": []
     },
     {
       "type": "toggle",

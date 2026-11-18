@@ -32,11 +32,18 @@ class ReelError(RuntimeError):
 
 
 def slugify(text: str, max_len: int = 48, default: str = "reel") -> str:
-    """Lowercase ASCII, accents removed, everything else turned into single hyphens; ``default`` if nothing is left."""
+    """Lowercase ASCII, accents removed, everything else turned into single hyphens, cut on a word boundary to at most
+    ``max_len`` characters; ``default`` if nothing is left."""
     t = unicodedata.normalize("NFKD", text.lower())
     t = "".join(c for c in t if not unicodedata.combining(c))
     t = re.sub(r"[^a-z0-9]+", "-", t).strip("-")
-    return t[:max_len].rstrip("-") or default
+    if len(t) > max_len:
+        cut = t[:max_len]
+        # Cut on a word boundary when that keeps at least half of the budget: never end on half a word.
+        if t[max_len] != "-" and "-" in cut and cut.rfind("-") >= max_len // 2:
+            cut = cut[:cut.rfind("-")]
+        t = cut
+    return t.rstrip("-") or default
 
 
 # --- atomic writes and fingerprints -------------------------------------------------------------------------------------
