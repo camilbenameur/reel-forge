@@ -105,7 +105,7 @@ const buildTrack = (): { track: AvatarTrack; words: Word[] } => {
     shape: (k % 10 === 9 ? 'X' : MOUTHS[(k * 7) % 8]) as MouthShape,
   }));
   const words: Word[] = Array.from({ length: 8 }, (_, k) => ({
-    text: 'mot',
+    text: 'word',
     start: 0.8 + k * 1.2,
     end: 1.2 + k * 1.2,
     emphasis: true,

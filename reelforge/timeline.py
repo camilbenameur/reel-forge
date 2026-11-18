@@ -390,8 +390,7 @@ def run(reel: Reel, force: bool = False) -> dict:
     script = load(reel)
     language = reel.language
     tl = build(reel.name, script, reel.read("words.json"), reel.read("mouth.json"), f"reels/{reel.name}/voice.wav", language)
-    lenient = (reel.state.get("script") or {}).get("provider") == "stub"
-    errors = validate(tl, catalog_mod.load(), unknown_scenes_are_errors=not lenient)
+    errors = validate(tl, catalog_mod.load())          # an unknown scene type would render as a red error card: refused
     if errors:
         raise ReelError("timeline refused: " + " ; ".join(errors[:6]))
     reel.write(tl, "timeline.json")

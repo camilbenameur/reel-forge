@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from .. import costs
+from . import pricing
 from .client import GPUClient, GPUError, Result
 
 MAX_BATCH_SEGMENTS = 12             # segments per job: ~12 x 15 s of FLAC audio fits well under the response limit
@@ -167,8 +168,6 @@ class VoiceClient:
         """One job per batch of segments, all submitted at once (several workers in parallel); segment order kept."""
         if not segments:
             return []
-        if self.check_budget:
-            costs.check_gpu_budget()
         ref = {"audio_b64": base64.b64encode(reference.audio).decode("ascii"), "text": reference.text}
         batch_size = int(batch or os.environ.get("REELFORGE_VOICE_BATCH") or DEFAULT_BATCH)
         requests = []
@@ -178,6 +177,8 @@ class VoiceClient:
             if max_tokens:
                 d["max_new_tokens"] = int(max_tokens)
             requests.append(d)
+        if self.check_budget:           # before any job is sent: the whole call must fit under the daily cap
+            costs.check_gpu_budget(pricing.plan_estimate(len(requests), len(segments)))
         results = self.client.call_many(self.function, requests, timeout_s=timeout_s)
         takes: list[Take] = []
         for res in results:
@@ -189,11 +190,12 @@ class VoiceClient:
     def design(self, description: str, text: str, language: str = "en", seeds: list[int] | None = None, *,
                format_: str = "wav", timeout_s: float = 1800.0) -> list[Take]:
         """One invented-voice candidate per seed (at most 8 per call)."""
+        picked = list(seeds or [0])[:MAX_DESIGN_SEEDS]
         if self.check_budget:
-            costs.check_gpu_budget()
+            costs.check_gpu_budget(pricing.plan_estimate(1, len(picked)))
         res = self.client.call(self.design_function,
                                {"description": description, "text": text, "language": language,
-                                "seeds": list(seeds or [0])[:MAX_DESIGN_SEEDS], "format": format_}, timeout_s=timeout_s)
+                                "seeds": picked, "format": format_}, timeout_s=timeout_s)
         return _takes(res, "candidates")
 
 

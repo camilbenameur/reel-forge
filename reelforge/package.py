@@ -1,8 +1,9 @@
 """The ``package`` step: caption.txt (caption + hashtags + AI disclosure) and cover.jpg (the hook frame, taken from render.mp4).
 
 The AI disclosure is computed from the reference voice: ``voice-reference/reference.source`` describes an invented voice (no
-person cloned); a reference excerpt without that file is assumed to be a real person's voice whose consent is on record;
-without any excerpt (stub voice) the disclosure stays generic. It never claims consent for an invented voice.
+person cloned). The caption states that a voice was cloned with consent ONLY when ``voice-reference/reference.consent`` exists
+(a note the publisher writes: who, when, where the written consent is kept); an excerpt without either file, or no excerpt at
+all (stub voice), gets the neutral "generated voice" disclosure. Nothing here ever claims a consent the repository cannot show.
 """
 
 from __future__ import annotations
@@ -36,18 +37,22 @@ Boxes to tick by hand by the person who publishes, after watching render.mp4. No
 
 - [ ] AI label: tick it in the platform at publication (AI-invented voice, generated mascot and illustrations)
 - [ ] Voice consent: the reference voice is invented (no person cloned) or the written consent of the person is on record
+      (then say so in voice-reference/reference.consent: the caption claims consent only when that file exists)
 - [ ] Licences of media (music, fonts, images) noted
 - [ ] Caption and call-to-action word proofread
 """
 
 
 def reference_kind() -> str:
-    """Nature of the reference voice: "invented" (reference.source describes a voice created by AI), "cloned" (an excerpt
-    without reference.source: a person's voice, whose consent is assumed to be on record) or "unknown" (no excerpt)."""
+    """Nature of the reference voice, from the files next to reference.wav:
+    "invented" (reference.source: a voice created by AI), "cloned" (reference.consent: the publisher recorded the consent of
+    the person) or "unknown" (no excerpt, or an excerpt with no provenance file: nothing is claimed about it)."""
     folder = config.paths().voice_reference
+    if not (folder / "reference.wav").is_file():
+        return "unknown"
     if (folder / "reference.source").is_file():
         return "invented"
-    if (folder / "reference.wav").is_file():
+    if (folder / "reference.consent").is_file():
         return "cloned"
     return "unknown"
 

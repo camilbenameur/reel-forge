@@ -68,12 +68,38 @@ def score_candidate(path: Path, text: str) -> float | None:
     return heuristic_score(x, sr, text)
 
 
+PROVENANCE_FILES = ("reference.wav", "reference.txt", "reference.source", "reference.consent")
+
+
+def _archive_previous(folder: Path, now: Callable[[], datetime] | None = None) -> Path | None:
+    """Move the current reference files to voice-reference/previous/<timestamp>/ (nothing to move: None)."""
+    present = [folder / n for n in PROVENANCE_FILES if (folder / n).exists()]
+    if not (folder / "reference.wav").exists():
+        return None
+    stamp = (now or (lambda: datetime.now(timezone.utc)))().strftime("%Y%m%dT%H%M%S")
+    target = folder / "previous" / stamp
+    n = 1
+    while target.exists():
+        target = folder / "previous" / f"{stamp}-{n}"
+        n += 1
+    target.mkdir(parents=True)
+    for p in present:
+        p.replace(target / p.name)
+    return target
+
+
 def design(description: str | None = None, text: str | None = None, seeds: list[int] | None = None, *, client=None,
            folder: Path | None = None, score: Scorer | None = score_candidate,
-           now: Callable[[], datetime] | None = None) -> dict:
+           now: Callable[[], datetime] | None = None, force: bool = False) -> dict:
     """Write the candidates, choose the best and write reference.wav / .txt / .source. Returns a report (dict).
-    ``client``: a VoiceClient (tests: over a fake transport); ``score=None``: take the first candidate."""
+    ``client``: a VoiceClient (tests: over a fake transport); ``score=None``: take the first candidate.
+    An existing reference voice is never replaced without ``force``: every reel's take cache is keyed on it (a new reference
+    invalidates the paid takes) and its reference.source / reference.consent may be a hand-written provenance note. With
+    ``force`` the previous files are archived in voice-reference/previous/<timestamp>/ first."""
     folder = folder or config.paths().voice_reference
+    if (folder / "reference.wav").exists() and not force:
+        raise ReelError("design-voice: voice-reference/reference.wav already exists; pass --force to replace it "
+                        "(the previous files are archived in voice-reference/previous/)")
     source = read_source(folder)
     description = (description or source.get("description") or DEFAULT_DESCRIPTION).strip()
     text_path = folder / "reference.txt"
@@ -84,7 +110,6 @@ def design(description: str | None = None, text: str | None = None, seeds: list[
     if client is None:
         from .gpu.voice import VoiceClient
         try:
-            costs.check_gpu_budget()
             client = VoiceClient(reel_dir=folder, step="design-voice")
         except (GPUError, costs.BudgetExceeded) as exc:
             raise ReelError(f"design-voice: {exc}") from exc
@@ -106,6 +131,9 @@ def design(description: str | None = None, text: str | None = None, seeds: list[
         log.info("candidate seed %s: %.1f s, score %s", seed, c.duration_s, "?" if value is None else f"{value:.1f}")
     scored = [r for r in results if r["score"] is not None]
     best = max(scored, key=lambda r: r["score"]) if scored else results[0]
+    archived = _archive_previous(folder, now)
+    if archived:
+        log.info("previous reference archived in %s", archived)
     (folder / "reference.wav").write_bytes(best["file"].read_bytes())
     text_path.write_text(text + "\n", encoding="utf-8")
     from .gpu.voice import VoiceClient
@@ -118,9 +146,9 @@ def design(description: str | None = None, text: str | None = None, seeds: list[
         f"Model: {getattr(client, 'DESIGN_MODEL', 'Qwen3-TTS-12Hz-1.7B-VoiceDesign')} "
         f"(reference then cloned by {VoiceClient.MODEL})\n"
         + (f"Score: {best['score']:.1f}/100\n" if best["score"] is not None else ""), encoding="utf-8")
-    return {"candidates": results, "retained": best, "description": description}
+    return {"candidates": results, "retained": best, "description": description, "archived": archived}
 
 
-def run(description: str | None = None, text: str | None = None, seeds: str | None = None) -> dict:
+def run(description: str | None = None, text: str | None = None, seeds: str | None = None, force: bool = False) -> dict:
     """Entry point of the CLI command."""
-    return design(description, text, parse_seeds(seeds))
+    return design(description, text, parse_seeds(seeds), force=force)

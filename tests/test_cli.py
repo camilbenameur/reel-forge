@@ -5,19 +5,6 @@ import pytest
 from reelforge import __main__ as cli
 
 
-@pytest.fixture
-def no_steps(monkeypatch):
-    """Pretend the later pipeline modules do not exist yet (they are added by other work)."""
-    real = cli.importlib.import_module
-
-    def fake(name, *a, **kw):
-        if name.startswith("reelforge.") and name.split(".")[1] in {n for n, _ in cli.PIPELINE}:
-            raise ModuleNotFoundError(f"No module named {name!r}", name=name)
-        return real(name, *a, **kw)
-
-    monkeypatch.setattr(cli.importlib, "import_module", fake)
-
-
 def test_step_dispatch_calls_run(root, capsys, monkeypatch):
     run(capsys, "new", "Topic")
     calls = []
@@ -50,22 +37,43 @@ def test_all_stops_after_script_without_approval(root, capsys):
     assert not list((root / "reels").glob("*/voice.wav"))
 
 
-def test_all_with_approval_reports_missing_step(root, capsys, no_steps):
-    code, _, err = run(capsys, "all", "Topic", "--approve-script")
-    assert code == 2 and "not implemented yet" in err
-
-
 def test_continue_validates_script_first(root, capsys):
     run(capsys, "new", "Topic")
     code, _, err = run(capsys, "continue", "topic")
     assert code == 2 and "script.json" in err
 
 
-def test_unimplemented_stub_commands(root, capsys, no_steps):
+def _fake_steps(monkeypatch, check_errors):
+    """Every step is a recording fake; `check` reports `check_errors`."""
+    from reelforge.check import Result
+    calls = []
+
+    def fake_import(name, *a, **k):
+        step = name.split(".")[1]
+        return type("M", (), {"run": staticmethod(
+            lambda reel, force=False, **kw: calls.append(step) or (Result(errors=list(check_errors)) if step == "check" else None))})
+
+    monkeypatch.setattr(cli.importlib, "import_module", fake_import)
+    return calls
+
+
+def test_check_errors_block_packaging(root, capsys, monkeypatch):
     run(capsys, "new", "Topic")
-    for cmd in ("voice", "align", "mouth", "timeline", "render", "check", "package"):
-        code, _, err = run(capsys, cmd, "topic")
-        assert code == 2 and f"'{cmd}' is not implemented yet" in err
+    run(capsys, "script", "topic")
+    calls = _fake_steps(monkeypatch, ["frozen image: 40 consecutive frames (1.3 s) from 2.0 s"])
+    code, _, err = run(capsys, "continue", "topic")
+    assert code == 2 and "check failed" in err and "frozen image" in err
+    assert calls[-1] == "check" and "package" not in calls
+    code, _, err = run(capsys, "check", "topic")
+    assert code == 2 and "check failed" in err
+
+
+def test_clean_check_lets_the_pipeline_reach_package(root, capsys, monkeypatch):
+    run(capsys, "new", "Topic")
+    run(capsys, "script", "topic")
+    calls = _fake_steps(monkeypatch, [])
+    assert run(capsys, "continue", "topic")[0] == 0 and calls[-1] == "package"
+    assert run(capsys, "check", "topic")[0] == 0
 
 
 def test_catalog_lists(root, capsys):

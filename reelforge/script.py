@@ -257,9 +257,13 @@ def run(reel: Reel, force: bool = False, language: str | None = None) -> dict[st
     """Write script.json (skipped when it is fresh for brief.md, unless ``force``)."""
     out = reel.path("script.json")
     brief = reel.path("brief.md")
-    if reel.is_fresh(out, brief) and not force:
+    wanted = config.language(language) if language else None
+    changed = wanted is not None and wanted != reel.state.get("language", wanted)
+    if reel.is_fresh(out, brief) and not force and not changed:
         log.info("script.json is up to date: skipped")
         return reel.read("script.json")
+    if changed:
+        log.warning("language changed to %s (was %s): script.json is rewritten", wanted, reel.state.get("language"))
     if not reel.exists("brief.md"):
         raise ReelError(f"brief.md missing in {reel.folder} (command `new`)")
     lang = config.language(language or reel.state.get("language"))
@@ -302,8 +306,7 @@ def load_validated(reel: Reel) -> dict[str, Any]:
     """Read script.json and replay ALL business rules: call before any spending (voice, GPU), because the script may have
     been edited by hand after the review. Raises ReelError listing the errors."""
     obj = load(reel)
-    stub = (reel.state.get("script") or {}).get("provider") == "stub"
-    r = validate(obj, catalog_mod.load(), unknown_scenes_are_errors=not stub, language=reel.state.get("language"))
+    r = validate(obj, catalog_mod.load(), language=reel.state.get("language"))      # an unknown scene type is always an error
     if r.errors:
         raise ReelError("script.json refused before any spending: " + " ; ".join(r.errors[:6]))
     return obj

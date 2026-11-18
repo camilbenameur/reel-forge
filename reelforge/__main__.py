@@ -1,7 +1,7 @@
 """Command line: ``python -m reelforge <command>``. Every step is idempotent (``--force`` redoes it).
 
-Steps from ``voice`` to ``package`` are provided by modules ``reelforge.<step>`` exposing ``run(reel, force=False)``; a step
-whose module is not there yet reports "not implemented" instead of failing obscurely.
+Steps from ``voice`` to ``package`` are provided by modules ``reelforge.<step>`` exposing ``run(reel, force=False)``.
+``check`` errors are blocking: ``continue`` / ``all`` stop before ``package`` and the ``check`` command exits non-zero.
 """
 
 from __future__ import annotations
@@ -25,13 +25,15 @@ STATUS_FILES = [("new", "brief.md"), ("script", "script.json"), *PIPELINE]
 
 def run_step(name: str, reel: Reel, force: bool = False, **options: Any) -> Any:
     """Run one pipeline step through ``reelforge.<name>.run``."""
-    try:
-        module = importlib.import_module(f"reelforge.{name}")
-    except ModuleNotFoundError as exc:
-        if exc.name != f"reelforge.{name}":
-            raise
-        raise ReelError(f"step '{name}' is not implemented yet") from None
-    return module.run(reel, force, **options)
+    return importlib.import_module(f"reelforge.{name}").run(reel, force, **options)
+
+
+def _blocking(name: str, result: Any) -> None:
+    """The ``check`` step found errors (frozen image, wrong dimensions, no audio...): nothing may be packaged."""
+    errors = list(getattr(result, "errors", None) or [])
+    if errors:
+        shown = "; ".join(errors[:5]) + (f" (+{len(errors) - 5} more)" if len(errors) > 5 else "")
+        raise ReelError(f"check failed, see qa/report.md: {shown}")
 
 
 def status(reel: Reel) -> str:
@@ -57,7 +59,9 @@ def continue_(reel: Reel, force_voice: bool = False, provider: str | None = None
         if name == "voice":
             run_step(name, reel, force_voice, provider=provider, **options)
         else:
-            run_step(name, reel, False)
+            result = run_step(name, reel, False)
+            if name == "check":
+                _blocking(name, result)
     return reel
 
 
@@ -114,6 +118,8 @@ def build_parser() -> argparse.ArgumentParser:
     dv = sp.add_parser("design-voice", help="invent the reference voice (VoiceDesign): candidates, best one in voice-reference/")
     dv.add_argument("--description", help="voice description (default: voice-reference/reference.source, else a built-in one)")
     dv.add_argument("--text", help="text the candidates read (default: voice-reference/reference.txt, else a built-in one)")
+    dv.add_argument("--force", action="store_true", help="replace an existing reference voice (the previous files are "
+                                                         "archived in voice-reference/previous/)")
     dv.add_argument("--seeds", help="comma-separated seeds, 1 to 8 (default 11,23,37,41)")
     gp = sp.add_parser("gpu", help="serverless GPU app: deploy | status | balance | stop | costs",
                        description="Manage the serverless GPU voice app.")
@@ -149,7 +155,7 @@ def _dispatch(a: argparse.Namespace) -> int:
         return 0
     if cmd == "design-voice":
         from . import design_voice
-        report = design_voice.run(a.description, a.text, a.seeds)
+        report = design_voice.run(a.description, a.text, a.seeds, a.force)
         for c in report["candidates"]:
             score = "?" if c["score"] is None else f"{c['score']:.1f}"
             print(f"seed {c['seed']}: {c['duration_s']} s, score {score}  {c['file']}")
@@ -165,7 +171,7 @@ def _dispatch(a: argparse.Namespace) -> int:
     elif cmd == "voice":
         run_step("voice", reel, a.force, provider=a.provider, split=a.split, takes=a.takes, rechoose=a.rechoose)
     elif cmd == "check":
-        run_step("check", reel, a.force, review=a.review)
+        _blocking("check", run_step("check", reel, a.force, review=a.review))
     else:
         run_step(cmd, reel, a.force)
     return 0

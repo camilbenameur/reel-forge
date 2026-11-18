@@ -42,3 +42,15 @@ def test_init_env_is_explicit(root, monkeypatch):
     assert config.llm_provider() == "stub"          # nothing loaded at import or by reading a setting
     assert config.init_env() == ["REELFORGE_LLM"]
     assert config.llm_provider() == "api"
+
+
+def test_llm_budget_zero_forbids_spend_and_only_off_removes_the_cap(monkeypatch):
+    monkeypatch.setenv("REELFORGE_LLM_BUDGET", "0")
+    assert config.llm_budget() == 0.0
+    for off in ("off", "no", "none"):
+        monkeypatch.setenv("REELFORGE_LLM_BUDGET", off)
+        assert config.llm_budget() is None
+    for bad in ("-1", "-0.5", "nan", "inf"):
+        monkeypatch.setenv("REELFORGE_LLM_BUDGET", bad)
+        with pytest.raises(config.ConfigError):
+            config.llm_budget()

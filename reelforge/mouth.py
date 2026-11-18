@@ -28,7 +28,7 @@ log = logging.getLogger("reelforge.mouth")
 VOWELS = {"en": "aeiouy", "fr": "aeiouyàâäéèêëîïôöùûüœ"}
 SHAPES = "ABCDEFGHX"
 MIN_FRAMES = 3
-LEAD_FRAMES = 0               # mouth.json follows the sound exactly; the one-frame lead is added by the studio (avatar/anim.ts)
+LEAD_FRAMES = 0               # mouth.json follows the sound exactly; the studio adds no lead either (MOUTH_LEAD_FRAMES = 0)
 SILENCE_DB = -40.0            # energy of a frame under which the voice is silent
 SILENCE_MIN_FRAMES = 5        # 150 ms: from there, closed mouth (X) whatever the aligner says
 SILENCE_RELATIVE = 0.08       # energy < 8 % of the speech reference: silence

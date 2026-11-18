@@ -21,7 +21,7 @@ from reelforge.testing import KEY, FakeRunPod, client, fixed_voice_output, flac,
 
 
 def make(output=voice_output, **kw):
-    fake = FakeRunPod(output, **{k: v for k, v in kw.items() if k in ("steps", "http_failures", "stuck")})
+    fake = FakeRunPod(output, **{k: v for k, v in kw.items() if k in ("steps", "http_failures", "stuck", "failure_code", "final_status")})
     return fake, client(fake)
 
 
@@ -64,8 +64,44 @@ def test_missing_key_is_a_fixable_error():
 
 
 def test_transient_errors_are_retried():
-    fake, c = make(http_failures=2)
+    fake, c = make(http_failures=2, failure_code=429)              # submission: only 429 is repeated
     assert c.call("voice", {"segments": [{"text": "a"}]}).output["ok"]
+
+
+def test_polling_retries_5xx():
+    fake = FakeRunPod(voice_output)
+    c = client(fake)
+    job = c.submit("voice", {"segments": [{"text": "a"}]})
+    fake.http_failures, fake.failure_code = 2, 503
+    assert c.wait("voice", job).output["ok"]
+
+
+def test_submission_is_not_repeated_after_a_5xx_or_a_timeout():
+    for code in (500, 502, 503, 504):
+        fake = FakeRunPod(voice_output, http_failures=1, failure_code=code)
+        with pytest.raises(GPUError, match=f"HTTP {code}"):
+            client(fake).submit("voice", {})
+        assert len(fake.requests) == 1 and not fake.jobs               # no second POST: no duplicate job
+
+    calls = []
+
+    def timed_out(req, timeout=None):
+        calls.append(1)
+        raise TimeoutError("read timed out")
+    with pytest.raises(GPUError, match="unreachable"):
+        GPUClient(KEY, opener=timed_out, sleep=lambda s: None).submit("voice", {})
+    assert len(calls) == 1
+
+
+def test_submission_is_repeated_when_the_connection_was_refused():
+    calls = []
+
+    def refused(req, timeout=None):
+        calls.append(1)
+        raise urllib.error.URLError(ConnectionRefusedError("refused"))
+    with pytest.raises(GPUError, match="unreachable"):
+        GPUClient(KEY, opener=refused, sleep=lambda s: None).submit("voice", {})
+    assert len(calls) == 5
 
 
 def test_request_errors_are_never_retried():
@@ -80,9 +116,9 @@ def test_request_errors_are_never_retried():
 
 
 def test_persistent_transient_failure_gives_up():
-    fake = FakeRunPod(voice_output, http_failures=99)
+    fake = FakeRunPod(voice_output, http_failures=99, failure_code=429)
     c = client(fake)
-    with pytest.raises(GPUError, match="HTTP 503"):
+    with pytest.raises(GPUError, match="HTTP 429"):
         c.call("voice", {})
     assert len(fake.requests) == 5
 
@@ -130,7 +166,7 @@ def test_call_many_keeps_order_and_cancels_the_rest_on_failure():
     c = client(fake)
     with pytest.raises(GPUError, match="boom"):
         c.call_many("voice", [{"segments": [{"text": t}]} for t in ("ok", "bad", "ok2")])
-    assert sorted(fake.cancelled) == ["job-0", "job-1", "job-2"]
+    assert fake.cancelled == ["job-2"]               # job-0 completed and job-1 failed: only the one still running is cancelled
 
 
 def test_journal_gets_every_job():
@@ -139,6 +175,91 @@ def test_journal_gets_every_job():
     c = client(fake, journal=lambda fn, res: seen.append((fn, res.job, res.output["gpu"])))
     c.call("voice", {"segments": [{"text": "a"}]})
     assert seen == [("voice", "job-0", "NVIDIA RTX A4500")]
+
+
+class Journal:
+    def __init__(self):
+        self.lines = []
+
+    def __call__(self, function, res):
+        self.lines.append((function, res.job, res.extra.get("status"), res.compute_s, res.output.get("gpu")))
+
+
+@pytest.mark.parametrize("status", ["FAILED", "TIMED_OUT", "CANCELLED"])
+def test_journal_gets_failed_timed_out_and_cancelled_jobs(status):
+    journal = Journal()
+    fake = FakeRunPod(lambda f, r: {"error": "boom"}, final_status=status)
+    with pytest.raises(GPUError, match=status):
+        client(fake, journal=journal).call("voice", {"segments": [{"text": "a"}]})
+    assert journal.lines == [("voice", "job-0", status, 4.2, None)]           # executionTime reported by RunPod
+
+
+def test_timeout_cancels_and_journals_an_elapsed_time_estimate():
+    journal = Journal()
+    fake = FakeRunPod(voice_output, stuck=True)
+    with pytest.raises(GPUError, match="cancelled"):
+        client(fake, journal=journal).call("voice", {"segments": [{"text": "a"}]}, timeout_s=30)
+    (function, job, status, compute_s, gpu), = journal.lines
+    assert (function, job, status, gpu) == ("voice", "job-0", "TIMED_OUT", "?") and compute_s > 30
+    assert fake.cancelled == ["job-0"]
+
+
+def test_journal_estimate_reaches_the_ledgers(tmp_path):
+    reel = costs.Ledger(tmp_path / "costs.jsonl")
+    fake = FakeRunPod(voice_output, stuck=True)
+    c = client(fake, journal=costs.gpu_journal(reel, "voice"))
+    with pytest.raises(GPUError):
+        c.call("voice", {"segments": [{"text": "a"}]}, timeout_s=30)
+    line = reel.lines()[0]
+    assert line["status"] == "TIMED_OUT" and line["cost_usd"] > 0 and line["gpu"] == "?"
+    assert costs.gpu_spend_today() == line["cost_usd"]
+
+
+def test_call_many_journals_the_cancelled_siblings_once():
+    journal = Journal()
+
+    def sometimes(f, r):
+        return {"ok": False, "error": "boom"} if r["segments"][0]["text"] == "bad" else voice_output(f, r)
+    fake = FakeRunPod(sometimes)
+    c = client(fake, journal=journal)
+    with pytest.raises(GPUError, match="boom"):
+        c.call_many("voice", [{"segments": [{"text": t}]} for t in ("ok", "bad", "ok2", "ok3")])
+    by_job = {j: st for _, j, st, _, _ in journal.lines}
+    assert by_job == {"job-0": "COMPLETED", "job-1": "COMPLETED", "job-2": "CANCELLED", "job-3": "CANCELLED"}
+    assert len(journal.lines) == 4 and sorted(fake.cancelled) == ["job-2", "job-3"]
+
+
+def test_polling_failure_cancels_the_job_and_journals_it():
+    journal = Journal()
+    fake = FakeRunPod(voice_output)
+    c = client(fake, journal=journal)
+    job = c.submit("voice", {"segments": [{"text": "a"}]})
+    fake.http_failures, fake.failure_code = 99, 503          # the network goes down while polling
+    with pytest.raises(GPUError, match="HTTP 503") as e:
+        c.wait("voice", job)
+    assert e.value.job is None and journal.lines[0][1:3] == ("job-0", "CANCELLED")
+    # (the cancel request itself failed too: it is best effort, the error raised is the polling one)
+    assert len(journal.lines) == 1
+
+
+def test_keyboard_interrupt_cancels_the_job():
+    journal = Journal()
+    fake = FakeRunPod(voice_output)
+    c = client(fake, journal=journal)
+
+    def interrupted(seconds):
+        raise KeyboardInterrupt
+    c._sleep = interrupted
+    with pytest.raises(KeyboardInterrupt):
+        c.call("voice", {"segments": [{"text": "a"}]})
+    assert fake.cancelled == ["job-0"] and journal.lines[0][1:3] == ("job-0", "CANCELLED")
+
+    fake2 = FakeRunPod(voice_output)
+    c2 = client(fake2)
+    c2._sleep = interrupted
+    with pytest.raises(KeyboardInterrupt):
+        c2.call_many("voice", [{"segments": [{"text": "a"}]}, {"segments": [{"text": "b"}]}])
+    assert sorted(fake2.cancelled) == ["job-0", "job-1"]
 
 
 # --- voice client -------------------------------------------------------------------------------------------------------
@@ -265,6 +386,25 @@ def test_daily_cap_blocks_before_any_job(tmp_path, fake_voice, monkeypatch):
     assert len(fake_voice.jobs) == 1
 
 
+def test_daily_cap_counts_the_estimated_cost_of_the_whole_call(tmp_path, fake_voice, monkeypatch):
+    ref = write_reference(tmp_path).ref
+    spent = costs.gpu_ledger_path()
+    costs.Ledger(spent).add(step="x", type_="gpu", cost_usd=2.99)             # 0.01 USD left under the 3 USD cap
+    with pytest.raises(costs.BudgetExceeded, match="estimated"):
+        gv.VoiceClient(reel_dir=tmp_path).clone([gv.Segment("a")], ref)
+    with pytest.raises(costs.BudgetExceeded, match="estimated"):
+        gv.VoiceClient(reel_dir=tmp_path).design("d", "t")
+    assert not fake_voice.jobs
+    many = [gv.Segment("w", seed=i) for i in range(30)]                       # 3 jobs: the estimate grows with the call
+    from reelforge.gpu import pricing
+    assert pricing.plan_estimate(3, 30) > pricing.plan_estimate(1, 1) > 0 and pricing.plan_estimate(0) == 0
+    monkeypatch.setenv("REELFORGE_GPU_LEDGER", str(tmp_path / "other-ledger.jsonl"))
+    costs.Ledger(costs.gpu_ledger_path()).add(step="x", type_="gpu", cost_usd=2.80)    # one small call fits, a big one not
+    gv.VoiceClient(reel_dir=tmp_path).clone([gv.Segment("a")], ref)
+    with pytest.raises(costs.BudgetExceeded):
+        gv.VoiceClient(reel_dir=tmp_path).clone(many, ref)
+
+
 # --- management CLI -----------------------------------------------------------------------------------------------------
 
 def test_cli_deploy_and_stop_use_rp_flash_from_the_worker_dir(monkeypatch):
@@ -336,10 +476,15 @@ def test_cli_costs_report(capsys, tmp_path):
     assert "0.3000 USD" in out and "voice " in out and "0.2500 USD" in out
 
 
-def test_cli_loads_the_repo_env_explicitly(tmp_path, monkeypatch, capsys):
+def test_cli_loads_the_repo_root_env_whatever_the_current_directory(tmp_path, monkeypatch):
     import os
-    monkeypatch.chdir(tmp_path)
-    (tmp_path / ".env").write_text("RUNPOD_API_KEY=rpa_from_repo_env\n")
+    repo, elsewhere = tmp_path / "repo", tmp_path / "elsewhere"
+    repo.mkdir()
+    elsewhere.mkdir()
+    (repo / ".env").write_text("RUNPOD_API_KEY=rpa_from_repo_env\n")
+    (elsewhere / ".env").write_text("RUNPOD_API_KEY=rpa_from_cwd_env\n")
+    monkeypatch.setenv("REELFORGE_ROOT", str(repo))
+    monkeypatch.chdir(elsewhere)
     assert "RUNPOD_API_KEY" not in os.environ
     gpu_cli.main(["costs"])
     assert os.environ["RUNPOD_API_KEY"] == "rpa_from_repo_env"

@@ -100,7 +100,7 @@ export const Hand: React.FC<{
     );
   }
 
-  // 'fist' et 'thumb'
+  // 'fist' and 'thumb'
   const thumbUp = type === 'thumb';
   const thumb: Finger = thumbUp
     ? { d: 'M -17,-34 C -27,-52 -26,-74 -22,-92', w: 17 }

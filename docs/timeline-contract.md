@@ -23,7 +23,7 @@ The studio ships a working example in `studio/src/fixtures/demo-timeline.json`; 
 | `fps` | number | Frames per second, always `30`. |
 | `width` | number | Canvas width in pixels, always `1080`. |
 | `height` | number | Canvas height in pixels, always `1920`. |
-| `durationInFrames` | number | Voice duration plus about 0.5 s of tail, in frames. The `Reel` composition takes its length, `fps`, `width` and `height` from the timeline (`calculateMetadata`). Target reels last 38 to 55 s. |
+| `durationInFrames` | number | Voice duration plus 0.6 s of tail (`TAIL_S` in `reelforge/timeline.py`), in frames. The `Reel` composition takes its length, `fps`, `width` and `height` from the timeline (`calculateMetadata`). Target reels last 38 to 55 s. |
 | `theme` | `Theme` | Base theme of the reel. A scene may force the other one. |
 | `language` | `'en' \| 'fr'`, optional | Reel language, default `'en'`. Selects the caption line-breaking rules (see `Word`). |
 | `audio` | `string \| null` | Path relative to `studio/public`, for example `reels/2026-10-30-my-topic/voice.wav`. The render step copies the voice there. `null` renders silently. |
@@ -128,7 +128,7 @@ Nine shapes, Rhubarb Lip Sync vocabulary:
 |---|---|---|
 | `visible` | boolean | Whether the mascot is drawn (bottom right). |
 | `poses` | `PoseKey[]` | `{ t, pose, expression }`, sorted by `t`, the first one at `t = 0`. A change fades over 3 frames with a short spring. |
-| `mouth` | `MouthKey[]` | `{ t, shape }`, sorted by `t`; the shape is held until the next key. About 10 changes per second, smoothed (minimum 80 to 100 ms). `mouth.json` follows the sound with no lead; the studio applies the lead itself (`MOUTH_LEAD_FRAMES`), never twice. |
+| `mouth` | `MouthKey[]` | `{ t, shape }`, sorted by `t`; the shape is held until the next key. About 10 changes per second, smoothed (minimum 80 to 100 ms). `mouth.json` follows the sound with no lead and the studio adds none (`MOUTH_LEAD_FRAMES = 0` in `studio/src/avatar/anim.ts`); a lead, if one is ever wanted, is applied there only, never twice. |
 | `seed` | number | Seed of the micro-animations (blinks, breathing, gaze): same seed, same blinks. |
 
 ## Minimal example
@@ -155,8 +155,8 @@ Nine shapes, Rhubarb Lip Sync vocabulary:
       "type": "step-card",
       "start": 0.10,
       "end": 2.90,
-      "props": { "numero": 1, "titre": "HOOK" },
-      "cues": { "carte": 0.25 }
+      "props": { "number": 1, "title": "HOOK" },
+      "cues": { "cue": 0.25 }
     }
   ],
   "avatar": {

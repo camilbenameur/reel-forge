@@ -134,6 +134,24 @@ def test_run_skips_when_fresh_and_redoes_when_brief_changes(root):
     assert script.run(r)["title"] != "Edited by hand"
 
 
+def test_run_redoes_the_script_when_the_language_changes(root):
+    r = script.new("Topic", language="en")
+    assert script.run(r)["language"] == "en"
+    assert script.run(r)["language"] == "en" and script.run(r, language="en")["language"] == "en"     # same: skipped
+    assert script.run(r, language="fr")["language"] == "fr" and r.state["language"] == "fr"
+
+
+def test_unknown_scene_type_is_always_refused_after_generation_even_for_a_stub_script(root):
+    r = script.new("Topic")
+    script.run(r)
+    assert r.state["script"]["provider"] == "stub"
+    s = script.load(r)
+    s["beats"][0]["scene"]["type"] = "no-such-scene"
+    r.write(s, "script.json")
+    with pytest.raises(ReelError, match="unknown scene type"):
+        script.load_validated(r)
+
+
 def test_run_without_brief(root):
     with pytest.raises(ReelError, match="brief.md missing"):
         script.run(reel_mod.create("x"))

@@ -35,3 +35,22 @@ def dollars_per_hour(gpu: str) -> float:
 def estimate(gpu: str, compute_s: float, factor: float = BILLING_FACTOR) -> float:
     """Estimated cost of a job in USD, cold starts and billed idle time included (measured factor)."""
     return round(dollars_per_hour(gpu) * compute_s / 3600.0 * factor, 5)
+
+
+# Planning figures used to refuse a call BEFORE it is submitted (the daily cap must hold for the whole call, not only for what
+# is already spent). Each worker bills a cold start and idle time on top of the compute; the app runs 2 workers at most.
+COLD_START_S = 150.0
+IDLE_S = 90.0
+MAX_WORKERS = 2
+COMPUTE_S_PER_SEGMENT = 8.0          # measured: ~5 s per 10 s take on a 4090, rounded up
+COMPUTE_S_PER_JOB = 10.0             # model warm-up inside a job
+
+
+def plan_estimate(jobs: int, segments: int = 0, gpu: str = "?") -> float:
+    """Conservative cost in USD of `jobs` jobs carrying `segments` segments in all: one cold start plus idle time per worker
+    that may start, plus the compute. Unknown card: the most expensive default rate."""
+    if jobs <= 0:
+        return 0.0
+    workers = min(jobs, MAX_WORKERS)
+    seconds = workers * (COLD_START_S + IDLE_S) + jobs * COMPUTE_S_PER_JOB + max(segments, jobs) * COMPUTE_S_PER_SEGMENT
+    return round(dollars_per_hour(gpu) * seconds / 3600.0, 5)

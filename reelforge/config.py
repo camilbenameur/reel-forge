@@ -6,7 +6,7 @@ Environment variables (all optional):
     REELFORGE_LANGUAGE             default reel language, ``en`` (default) or ``fr``
     REELFORGE_LLM                  stub (default, fixtures) | api | claude-code (test only, reels are flagged unpublishable)
     REELFORGE_ANTHROPIC_API_KEY    key of the Anthropic API (``api`` mode, the publishable one)
-    REELFORGE_LLM_BUDGET           LLM spending cap per reel in USD (default 5; ``off``: no cap)
+    REELFORGE_LLM_BUDGET           LLM spending cap per reel in USD (default 5; 0: no spend allowed; ``off``: no cap)
     REELFORGE_MODEL_WRITE          model that writes the script (default claude-opus-5-5)
     REELFORGE_EFFORT               optional effort level passed to the model
     REELFORGE_CLAUDE_TIMEOUT       seconds allowed to one ``claude -p`` call (default 900)
@@ -28,6 +28,7 @@ Nothing is read at import time except the package location; every setting is eva
 
 from __future__ import annotations
 
+import math
 import os
 import shutil
 from dataclasses import dataclass
@@ -118,17 +119,20 @@ def llm_provider() -> str:
 
 
 def llm_budget() -> float | None:
-    """LLM spending cap per reel in USD; None means no cap."""
+    """LLM spending cap per reel in USD; None means no cap (only the explicit 'off'). 0 allows no spend at all; a negative
+    value is a configuration error."""
     raw = (os.environ.get("REELFORGE_LLM_BUDGET") or "").strip().lower()
     if not raw:
         return DEFAULT_LLM_BUDGET_USD
-    if raw in ("0", "off", "no", "none"):
+    if raw in ("off", "no", "none"):
         return None
     try:
         value = float(raw)
     except ValueError:
         raise ConfigError(f"REELFORGE_LLM_BUDGET={raw!r}: a number of dollars (or 'off') is expected") from None
-    return value if value > 0 else None
+    if not math.isfinite(value) or value < 0:
+        raise ConfigError(f"REELFORGE_LLM_BUDGET={raw!r}: a number of dollars >= 0 (0 forbids any spend) or 'off' is expected")
+    return value
 
 
 def model(role: str = "write") -> str:

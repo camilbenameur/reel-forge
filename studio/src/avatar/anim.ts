@@ -45,7 +45,8 @@ export const REST_STATE: FigureState = {
   t: 0,
 };
 
-// Mouth lead over the sound, in frames. Measured on the render pixels by the MS4 metric (target: -33 ms).
+// Mouth lead over the sound, in frames. 0: no lead anywhere (mouth.json follows the sound and the studio adds nothing);
+// 1 would put the mouth one frame (33 ms) ahead of the sound. Changing it here is the only place to do it.
 export const MOUTH_LEAD_FRAMES = 0;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -173,8 +174,8 @@ export const computeState = (
     ? 1
     : spring({ frame: age, fps, config: { damping: 7, stiffness: 260, mass: 0.6 }, durationInFrames: 10 });
 
-  // mouth: key in force at the frame + MOUTH_LEAD_FRAMES (the mouth slightly precedes the sound, target -33 ms at the pixel).
-  // mouth.json follows the sound with no lead (ANTICIPATION_FRAMES = 0): the lead is applied only here, never twice.
+  // mouth: key in force at the frame + MOUTH_LEAD_FRAMES. mouth.json follows the sound with no lead (LEAD_FRAMES = 0 in
+  // reelforge/mouth.py) and MOUTH_LEAD_FRAMES is 0 too: there is no lead at all; if one is wanted it is applied only here.
   const look = frame + MOUTH_LEAD_FRAMES;
   const mouth = track.mouth;
   let mi = -1;

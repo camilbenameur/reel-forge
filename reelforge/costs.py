@@ -3,7 +3,8 @@
 Two ledgers:
 - the reel's own ledger, ``<reel dir>/costs.jsonl``: what that reel cost, step by step;
 - the machine-wide GPU ledger, ``~/.config/reelforge/gpu-spend.jsonl`` (or ``REELFORGE_GPU_LEDGER``), which carries the DAILY
-  CAP (``REELFORGE_GPU_DAILY_CAP``, 3 USD by default): beyond it, no GPU job is submitted that UTC day.
+  CAP (``REELFORGE_GPU_DAILY_CAP``, 3 USD by default): beyond it, no GPU job is submitted that UTC day. The check is made BEFORE a call with a conservative estimate of the whole
+  call (gpu.pricing.plan_estimate), not only against what is already spent.
 
 GPU costs are estimates: job compute time times the card rate times the measured billing factor (see gpu/pricing.py).
 Nothing written here ever contains a secret.
@@ -111,7 +112,8 @@ def check_gpu_budget(estimate_usd: float = 0.0, ledger: Ledger | None = None) ->
 
 
 def gpu_journal(reel_ledger: Ledger | None = None, step: str = "?") -> Callable[[str, Any], None]:
-    """Callable for GPUClient(journal=...): every finished job is written to the machine ledger and the reel ledger."""
+    """Callable for GPUClient(journal=...): every ended job (completed, failed, timed out, cancelled) is written to the machine
+    ledger and the reel ledger."""
     from .gpu import pricing
 
     def record(function: str, res: Any) -> None:
@@ -119,6 +121,9 @@ def gpu_journal(reel_ledger: Ledger | None = None, step: str = "?") -> Callable[
         cost = pricing.estimate(gpu, res.compute_s)
         details = {"function": function, "job": res.job, "gpu": gpu, "compute_s": res.compute_s,
                    "queue_s": res.queue_s, "estimated": True}
+        status = (getattr(res, "extra", None) or {}).get("status")
+        if status:
+            details["status"] = status
         Ledger(gpu_ledger_path()).add(step=step, type_="gpu", cost_usd=cost, **details)
         if reel_ledger is not None:
             reel_ledger.add(step=step, type_="gpu", cost_usd=cost, **details)

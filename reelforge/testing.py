@@ -39,8 +39,9 @@ class Response:
 class FakeRunPod:
     """Each job goes IN_QUEUE, then IN_PROGRESS, then COMPLETED; `output(function, request)` builds the output."""
 
-    def __init__(self, output, steps=2, http_failures=0, stuck=False, key=KEY):
+    def __init__(self, output, steps=2, http_failures=0, stuck=False, key=KEY, failure_code=503, final_status="COMPLETED"):
         self.output, self.steps, self.http_failures, self.stuck, self.key = output, steps, http_failures, stuck, key
+        self.failure_code, self.final_status = failure_code, final_status
         self.jobs: dict[str, dict] = {}
         self.requests: list = []
         self.cancelled: list[str] = []
@@ -50,7 +51,7 @@ class FakeRunPod:
         assert req.headers["Authorization"] == f"Bearer {self.key}"
         if self.http_failures:
             self.http_failures -= 1
-            raise urllib.error.HTTPError(req.full_url, 503, "busy", {}, io.BytesIO(b"overloaded"))
+            raise urllib.error.HTTPError(req.full_url, self.failure_code, "busy", {}, io.BytesIO(b"overloaded"))
         path = req.full_url.split("/flash/")[1]
         function = req.headers["X-flash-endpoint"]
         if path == "run":
@@ -66,7 +67,7 @@ class FakeRunPod:
         j["n"] += 1
         if self.stuck or j["n"] <= self.steps:
             return Response({"id": jid, "status": "IN_PROGRESS" if j["n"] > 1 else "IN_QUEUE"})
-        return Response({"id": jid, "status": "COMPLETED", "delayTime": 1500, "executionTime": 4200,
+        return Response({"id": jid, "status": self.final_status, "delayTime": 1500, "executionTime": 4200,
                          "output": self.output(j["function"], j["request"])})
 
 

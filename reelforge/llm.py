@@ -124,12 +124,14 @@ def _stripped(name: str, value: str) -> bool:
         return not value.strip()                 # empty variable: as if it did not exist
     if upper in KEPT:
         return False
-    return upper in STRIPPED or upper.startswith(STRIPPED_PREFIXES)
+    # every other secret (RunPod key, other tokens loaded from .env) stays out of the child process too
+    return upper in STRIPPED or upper.startswith(STRIPPED_PREFIXES) or secrets.is_sensitive(name)
 
 
 def claude_env() -> dict[str, str]:
-    """Environment of the claude process: no API key, no inherited session state, with isolation (no CLAUDE.md, no
-    memory). The login token, if any, is copied as is: the binary reads it, never this code."""
+    """Environment of the claude process: no API key and no other secret (any variable whose name says KEY, TOKEN, SECRET or
+    PASSWORD), no inherited session state, with isolation (no CLAUDE.md, no memory). Only the login token, if any, is copied
+    as is: the binary reads it, never this code."""
     env = {n: v for n, v in os.environ.items() if not _stripped(n, v)}
     env.update(ISOLATION)
     return env

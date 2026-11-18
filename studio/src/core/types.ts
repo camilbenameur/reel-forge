@@ -52,7 +52,7 @@ export interface SceneSpec {
   type: string;                    // key of the scene registry (studio/src/scenes)
   start: number;
   end: number;
-  props: Record<string, unknown>;  // props specific to the scene type (see docs/scenes.md)
+  props: Record<string, unknown>;  // props specific to the scene type (see the README.md of the scene family in studio/src/scenes/, or `python -m reelforge catalog`)
   cues: Record<string, number>;    // cue name -> absolute time of the word that triggers it
   theme?: Theme;                   // forces the theme during the scene (e.g. "night" switch on the reveal)
 }

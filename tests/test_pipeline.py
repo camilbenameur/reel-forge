@@ -62,6 +62,17 @@ def test_timeline_contract(aligned, monkeypatch):
     assert all(stamp["start"] - 0.01 <= t for t in stamp["cues"].values())
 
 
+def test_timeline_step_refuses_an_unknown_scene_even_for_a_stub_script(aligned):
+    from reelforge import script as script_mod
+    mouth.run(aligned)
+    assert aligned.state["script"]["provider"] == "stub"
+    s = script_mod.load(aligned)
+    s["beats"][0]["scene"]["type"] = "no-such-scene"
+    aligned.write(s, "script.json")
+    with pytest.raises(ReelError, match="unknown to the catalog"):
+        timeline.run(aligned)
+
+
 def test_timeline_validation_catches_errors(aligned):
     mouth.run(aligned)
     tl = timeline.run(aligned)
@@ -142,6 +153,10 @@ def test_check_detects_frozen_and_empty():
 
 
 def test_disclosure_follows_reference(root, reference_voice):
+    assert package.reference_kind() == "unknown"                      # a bare excerpt: no consent is claimed
+    assert package.disclosure("en") == package.DISCLOSURES["en"]["unknown"]
+    assert "consent" not in package.disclosure("en")
+    (reference_voice / "reference.consent").write_text("Written consent kept by the publisher.\n")
     assert package.disclosure("en") == package.DISCLOSURES["en"]["cloned"]
     (reference_voice / "reference.source").write_text("INVENTED VOICE\n")
     assert "AI-invented" in package.disclosure("en")
@@ -160,6 +175,27 @@ def test_design_voice(root, fake_voice, tmp_path):
         design_voice.parse_seeds("a,b")
 
 
+def test_design_voice_never_overwrites_a_reference_without_force(root, fake_voice):
+    folder = root / "voice-reference"
+    folder.mkdir()
+    (folder / "reference.wav").write_bytes(b"RIFFold")
+    (folder / "reference.txt").write_text("old transcript\n")
+    (folder / "reference.consent").write_text("hand-written consent note\n")
+    with pytest.raises(ReelError, match="--force"):
+        design_voice.run("a calm voice", None, "5")
+    assert not fake_voice.jobs                                             # refused before any GPU job
+    assert (folder / "reference.wav").read_bytes() == b"RIFFold"
+    rep = design_voice.run("a calm voice", None, "5", force=True)
+    archived = rep["archived"]
+    assert archived.parent == folder / "previous"
+    assert (archived / "reference.wav").read_bytes() == b"RIFFold"
+    assert (archived / "reference.consent").read_text() == "hand-written consent note\n"
+    assert (archived / "reference.txt").read_text() == "old transcript\n"
+    assert not (folder / "reference.consent").exists()                      # the new voice is invented: no stale consent note
+    assert "INVENTED VOICE" in (folder / "reference.source").read_text()
+    assert (folder / "reference.wav").read_bytes() != b"RIFFold"
+
+
 def run_cli(capsys, *argv):
     code = cli.main(list(argv))
     o = capsys.readouterr()
@@ -176,3 +212,10 @@ def test_cli_all_with_approval_stub(root, capsys, monkeypatch):
         assert (folder / name).exists(), name
     code, out, _ = run_cli(capsys, "status")
     assert "[x] package" in out
+
+
+def test_provenance_files_without_an_excerpt_claim_nothing(root):
+    folder = root / "voice-reference"
+    folder.mkdir(exist_ok=True)
+    (folder / "reference.source").write_text("INVENTED VOICE\n")
+    assert package.reference_kind() == "unknown"

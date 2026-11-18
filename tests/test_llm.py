@@ -206,3 +206,22 @@ def test_claude_env_strips_prefixes(monkeypatch):
     env = llm.claude_env()
     assert not [k for k in env if k.startswith(("CLAUDECODE", "CLAUDE_CODE_USE"))]
     assert "CLAUDE_CODE_OAUTH_TOKEN" not in env and env["CLAUDE_CODE_DISABLE_AUTO_MEMORY"] == "1"
+
+
+def test_claude_env_keeps_no_secret_but_the_login_token(monkeypatch):
+    monkeypatch.setenv("RUNPOD_API_KEY", "rpa_xxxxxxxxxxxx")
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp_xxxxxxxxxxxx")
+    monkeypatch.setenv("MY_DB_PASSWORD", "hunter2hunter2")
+    monkeypatch.setenv("CLAUDE_CODE_OAUTH_TOKEN", "oauth-token-value")
+    monkeypatch.setenv("HOME_DIR_NOTE", "harmless")
+    env = llm.claude_env()
+    assert not [k for k in env if k in ("RUNPOD_API_KEY", "GITHUB_TOKEN", "MY_DB_PASSWORD")]
+    assert env["CLAUDE_CODE_OAUTH_TOKEN"] == "oauth-token-value" and env["HOME_DIR_NOTE"] == "harmless"
+    assert "PATH" in env
+
+
+def test_llm_budget_zero_refuses_before_any_spend(monkeypatch, tmp_path):
+    monkeypatch.setenv("REELFORGE_LLM_BUDGET", "0")
+    client = llm.LLM(step="script")
+    with pytest.raises(llm.BudgetExceeded):
+        client._check_budget()

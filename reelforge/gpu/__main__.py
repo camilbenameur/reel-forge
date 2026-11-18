@@ -23,7 +23,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from .. import costs, secrets
+from .. import config, costs, secrets
 from .client import APPS
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -117,7 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    secrets.load(Path.cwd() / ".env")
+    config.init_env()               # repository-root .env (same lookup as the main CLI), whatever the current directory
     a = build_parser().parse_args(argv)
     if a.command == "deploy":
         return deploy()
