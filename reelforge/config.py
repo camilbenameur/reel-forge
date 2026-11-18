@@ -14,7 +14,13 @@ Environment variables (all optional):
     REELFORGE_VOICE                gpu | stub (default stub)
     REELFORGE_GPU_DAILY_CAP        daily GPU spending cap in USD (default 3), see ``costs``
     RUNPOD_API_KEY                 RunPod key: repository .env or ~/.config/reelforge/secrets.env
+    REELFORGE_VOICE_SPLIT          continuous | beat (default: the provider's own: continuous for gpu, beat for stub)
+    REELFORGE_VOICE_BLOCK_MAX      characters per voice block in continuous mode (default 600)
+    REELFORGE_VOICE_TAKES          valid takes kept per block, best one retained (default 1; 3 or 4 on the GPU)
+    REELFORGE_VOICE_BATCH          takes generated in the same pass on the card (default 6)
+    REELFORGE_VOICE_TEMPERATURE / REELFORGE_VOICE_TOP_P    sampling settings of the cloned voice (default: the model's)
     REELFORGE_WHISPER_MODEL        faster-whisper model used for alignment (default small)
+    REELFORGE_RENDER_CONCURRENCY   browser tabs used by the render (default 2)
     REELFORGE_FFMPEG / REELFORGE_FFPROBE   binaries (default: found on the PATH)
 
 Nothing is read at import time except the package location; every setting is evaluated when asked for.
@@ -37,6 +43,8 @@ LANGUAGES = ("en", "fr")
 DEFAULT_LANGUAGE = "en"
 LLM_PROVIDERS = ("stub", "api", "claude-code")
 VOICE_PROVIDERS = ("gpu", "stub")
+VOICE_SPLITS = ("continuous", "beat")
+DEFAULT_VOICE_BLOCK_MAX = 600
 DEFAULT_LLM_BUDGET_USD = 5.0
 DEFAULT_MODEL_WRITE = "claude-opus-5-5"
 
@@ -153,3 +161,50 @@ def ffmpeg() -> str:
 
 def ffprobe() -> str:
     return _binary("ffprobe")
+
+
+def voice_split(value: str | None = None, default: str = "beat") -> str:
+    """``continuous`` or ``beat``: the given value, else REELFORGE_VOICE_SPLIT, else the provider's default."""
+    name = (value or os.environ.get("REELFORGE_VOICE_SPLIT") or default).strip().lower()
+    if name not in VOICE_SPLITS:
+        raise ConfigError(f"voice split {name!r} is unknown (expected: {', '.join(VOICE_SPLITS)})")
+    return name
+
+
+def voice_block_max() -> int:
+    raw = (os.environ.get("REELFORGE_VOICE_BLOCK_MAX") or "").strip()
+    if not raw:
+        return DEFAULT_VOICE_BLOCK_MAX
+    try:
+        n = int(raw)
+    except ValueError:
+        n = 0
+    if n < 50:
+        raise ConfigError(f"REELFORGE_VOICE_BLOCK_MAX must be an integer of at least 50, not {raw!r}")
+    return n
+
+
+def voice_takes(value: int | None = None) -> int:
+    """Takes per block: the given value, else REELFORGE_VOICE_TAKES, else 1 (between 1 and 10)."""
+    raw = value if value is not None else ((os.environ.get("REELFORGE_VOICE_TAKES") or "").strip() or 1)
+    try:
+        n = int(raw)
+    except (TypeError, ValueError):
+        n = 0
+    if not 1 <= n <= 10:
+        raise ConfigError(f"REELFORGE_VOICE_TAKES / --takes must be an integer from 1 to 10, not {raw!r}")
+    return n
+
+
+def render_concurrency() -> int:
+    """Browser tabs of the render: with 4 tabs the ffmpeg assembly runs out of memory on a machine with 4 GB free."""
+    raw = (os.environ.get("REELFORGE_RENDER_CONCURRENCY") or "").strip()
+    if not raw:
+        return 2
+    try:
+        n = int(raw)
+    except ValueError:
+        n = 0
+    if n < 1:
+        raise ConfigError(f"REELFORGE_RENDER_CONCURRENCY must be a positive integer, not {raw!r}")
+    return n

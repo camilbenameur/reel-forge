@@ -204,15 +204,19 @@ class LLM:
         return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text").strip()
 
     def json(self, *, system: str, prompt: str, validate: Callable[[Any], list[str]] | None = None,
-             stub: str | None = None, tries: int = 2, max_tokens: int = MAX_TOKENS) -> Any:
+             stub: str | None = None, tries: int = 2, max_tokens: int = MAX_TOKENS,
+             images: list[Path] | None = None) -> Any:
         """A JSON answer. ``validate(obj)`` returns the list of errors (empty when good); a rejected answer is sent back to
-        the model with its errors for another try (not in stub mode, where the fixture would not change)."""
+        the model with its errors for another try (not in stub mode, where the fixture would not change). ``images``: image
+        files shown to the model (``api`` and ``stub`` modes only)."""
         name = self.provider
+        if images and name == "claude-code":
+            raise LLMError(f"[{self.step}] images are not supported in claude-code mode (use REELFORGE_LLM=api)")
         errors: list[str] = []
         request = prompt
         for attempt in range(max(1, tries)):
             try:
-                obj = self._json_once(name, system, request, stub, max_tokens)
+                obj = self._json_once(name, system, request, stub, max_tokens, images)
                 errors = list(validate(obj)) if validate else []
                 if not errors:
                     return obj
@@ -226,13 +230,14 @@ class LLM:
         raise LLMError(f"[{self.step}] invalid JSON output: " + " ; ".join(errors[:8]))
 
     # --- internals ---
-    def _json_once(self, name: str, system: str, request: str, stub: str | None, max_tokens: int) -> Any:
+    def _json_once(self, name: str, system: str, request: str, stub: str | None, max_tokens: int,
+                   images: list[Path] | None = None) -> Any:
         if name == "stub":
             return extract_json(self._stub(stub, (".json",)))
         if name == "claude-code":
             data = self._claude(system, request)
             return extract_json(str(data.get("result") or ""))
-        msg = self._api(system, request, max_tokens)
+        msg = self._api(system, request, max_tokens, images)
         return extract_json("".join(b.text for b in msg.content if getattr(b, "type", "") == "text"))
 
     def _stub(self, key: str | None, extensions: tuple[str, ...]) -> str:
@@ -276,12 +281,25 @@ class LLM:
             self._client = anthropic.Anthropic(api_key=key)
         return self._client
 
-    def _api(self, system: str, prompt: str, max_tokens: int):
+    @staticmethod
+    def _content(prompt: str, images: list[Path] | None) -> str | list[dict[str, Any]]:
+        """User message content: the text alone, or the images (base64) followed by the text."""
+        if not images:
+            return prompt
+        import base64
+        blocks: list[dict[str, Any]] = []
+        for path in images:
+            media = "image/png" if str(path).lower().endswith(".png") else "image/jpeg"
+            blocks.append({"type": "image", "source": {"type": "base64", "media_type": media,
+                                                       "data": base64.b64encode(Path(path).read_bytes()).decode("ascii")}})
+        return [*blocks, {"type": "text", "text": prompt}]
+
+    def _api(self, system: str, prompt: str, max_tokens: int, images: list[Path] | None = None):
         self._check_budget()
         model = config.model("write")
         params: dict[str, Any] = {"model": model, "max_tokens": max_tokens,
                                   "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-                                  "messages": [{"role": "user", "content": prompt}]}
+                                  "messages": [{"role": "user", "content": self._content(prompt, images)}]}
         effort = os.environ.get("REELFORGE_EFFORT")
         if effort:
             params["output_config"] = {"effort": effort}

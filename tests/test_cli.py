@@ -25,7 +25,7 @@ def test_step_dispatch_calls_run(root, capsys, monkeypatch):
     monkeypatch.setattr(cli.importlib, "import_module", lambda name, *a, **k: fake)
     assert run(capsys, "align", "topic", "--force")[0] == 0
     assert run(capsys, "voice", "topic", "--provider", "stub")[0] == 0
-    assert calls[0][1] is True and calls[1][2] == {"provider": "stub"}
+    assert calls[0][1] is True and calls[1][2] == {"provider": "stub", "split": None, "takes": None, "rechoose": False}
 
 
 def run(capsys, *argv):
@@ -66,8 +66,6 @@ def test_unimplemented_stub_commands(root, capsys, no_steps):
     for cmd in ("voice", "align", "mouth", "timeline", "render", "check", "package"):
         code, _, err = run(capsys, cmd, "topic")
         assert code == 2 and f"'{cmd}' is not implemented yet" in err
-    code, _, err = run(capsys, "design-voice")
-    assert code == 2
 
 
 def test_catalog_lists(root, capsys):

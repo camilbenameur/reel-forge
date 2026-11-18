@@ -48,12 +48,16 @@ def status(reel: Reel) -> str:
     return "\n".join(lines)
 
 
-def continue_(reel: Reel, force_voice: bool = False, **options: Any) -> Reel:
+def continue_(reel: Reel, force_voice: bool = False, provider: str | None = None, **options: Any) -> Reel:
     """From the voice to the package, on a reviewed script. The script is fully revalidated BEFORE any spending (it may have
-    been edited by hand). Only the voice (paid) is redone on request; other steps redo themselves when their inputs change."""
+    been edited by hand). Only the voice (paid) is redone on request; other steps redo themselves when their inputs change.
+    ``provider`` and the other ``options`` go to the voice step only."""
     script_mod.load_validated(reel)
     for name, _ in PIPELINE:
-        run_step(name, reel, force_voice if name == "voice" else False, **options)
+        if name == "voice":
+            run_step(name, reel, force_voice, provider=provider, **options)
+        else:
+            run_step(name, reel, False)
     return reel
 
 
@@ -79,10 +83,18 @@ def build_parser() -> argparse.ArgumentParser:
     v = sp.add_parser("voice", help="voice.wav (gpu | stub)")
     reel_arg(v)
     v.add_argument("--provider", choices=config.VOICE_PROVIDERS)
+    v.add_argument("--split", choices=config.VOICE_SPLITS, help="continuous blocks or one request per beat "
+                                                                "(default: the provider's own)")
+    v.add_argument("--takes", type=int, help="valid takes kept per block, the best is retained (default 1; 3 or 4 on the GPU)")
+    v.add_argument("--rechoose", action="store_true", help="re-score the cached takes and reassemble, without any GPU call")
     for name, help_ in (("align", "words.json (forced alignment)"), ("mouth", "mouth.json (lip-sync keys)"),
                         ("timeline", "timeline.json + copy into studio/public"), ("render", "render.mp4 (Remotion)"),
-                        ("check", "technical and visual check of render.mp4"), ("package", "caption.txt + cover.jpg")):
+                        ("package", "caption.txt + cover.jpg")):
         reel_arg(sp.add_parser(name, help=help_))
+    ck = sp.add_parser("check", help="technical check of render.mp4, frozen frames, contact sheet")
+    reel_arg(ck)
+    ck.add_argument("--review", action="store_true", help="add a visual review of the contact sheet by a vision model "
+                                                          "(REELFORGE_LLM=api; stub fixture otherwise)")
     a = sp.add_parser("all", help="new -> script, then STOPS for the human review of the script (see --approve-script)")
     a.add_argument("topic")
     a.add_argument("--slug")
@@ -90,15 +102,19 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--approve-script", action="store_true", help="do not stop: continue to package without a review")
     a.add_argument("--force-script", action="store_true", help="rewrite script.json even if it is up to date")
     a.add_argument("--force-voice", action="store_true", help="redo the voice (paid GPU) even if it is up to date")
+    a.add_argument("--provider", choices=config.VOICE_PROVIDERS, help="voice provider (default REELFORGE_VOICE or stub)")
     c = sp.add_parser("continue", help="voice -> package on a reviewed script")
     reel_arg(c, force=False)
     c.add_argument("--force-voice", action="store_true", help="redo the voice (paid GPU) even if it is up to date")
+    c.add_argument("--provider", choices=config.VOICE_PROVIDERS, help="voice provider (default REELFORGE_VOICE or stub)")
     st = sp.add_parser("status", help="progress of a reel")
     reel_arg(st, force=False)
     ca = sp.add_parser("catalog", help="list the scene catalog (studio/scenes.catalog.json)")
     ca.add_argument("--export", action="store_true", help="regenerate the catalog from the studio's scene registry first")
     dv = sp.add_parser("design-voice", help="invent the reference voice (VoiceDesign): candidates, best one in voice-reference/")
-    dv.add_argument("--description", help="voice description (default: voice-reference/reference.source)")
+    dv.add_argument("--description", help="voice description (default: voice-reference/reference.source, else a built-in one)")
+    dv.add_argument("--text", help="text the candidates read (default: voice-reference/reference.txt, else a built-in one)")
+    dv.add_argument("--seeds", help="comma-separated seeds, 1 to 8 (default 11,23,37,41)")
     gp = sp.add_parser("gpu", help="serverless GPU app: deploy | status | balance | stop | costs",
                        description="Manage the serverless GPU voice app.")
     gp.add_argument("arguments", nargs=argparse.REMAINDER, help="deploy|status|balance|stop|costs [options]")
@@ -128,20 +144,28 @@ def _dispatch(a: argparse.Namespace) -> int:
         if not a.approve_script:
             print(f"Script written: {reel.path('script.json')}\nReview it, then: python -m reelforge continue {reel.name}")
             return 0
-        continue_(reel, a.force_voice)
+        continue_(reel, a.force_voice, a.provider)
         print(reel.folder)
         return 0
     if cmd == "design-voice":
-        raise ReelError("step 'design-voice' is not implemented yet")
+        from . import design_voice
+        report = design_voice.run(a.description, a.text, a.seeds)
+        for c in report["candidates"]:
+            score = "?" if c["score"] is None else f"{c['score']:.1f}"
+            print(f"seed {c['seed']}: {c['duration_s']} s, score {score}  {c['file']}")
+        print(f"retained: seed {report['retained']['seed']} -> {config.paths().voice_reference / 'reference.wav'}")
+        return 0
     reel = find(a.reel)
     if cmd == "status":
         print(status(reel))
     elif cmd == "script":
         script_mod.run(reel, a.force, a.language)
     elif cmd == "continue":
-        continue_(reel, a.force_voice)
+        continue_(reel, a.force_voice, a.provider)
     elif cmd == "voice":
-        run_step("voice", reel, a.force, provider=a.provider)
+        run_step("voice", reel, a.force, provider=a.provider, split=a.split, takes=a.takes, rechoose=a.rechoose)
+    elif cmd == "check":
+        run_step("check", reel, a.force, review=a.review)
     else:
         run_step(cmd, reel, a.force)
     return 0

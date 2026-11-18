@@ -159,3 +159,42 @@ def fake_voice(fake_runpod):
     """The voice functions return 24 kHz FLACs whose duration is proportional to the word count (SECONDS_PER_WORD)."""
     fake_runpod.output = voice_output
     return fake_runpod
+
+
+# --- fake speech recognition -----------------------------------------------------------------------------------------------
+
+class FakeWhisper:
+    """Stands for the recognition engine (no model, no download). Given the texts the audio can contain, it answers with the
+    words of the text whose simulated duration (SECONDS_PER_WORD per word, as in ``voice_output``) is the closest to the
+    duration of the audio file, or of all the texts together, spread evenly over the file. ``fixed``: words returned as they
+    are (a list of ``recognition.Word``), whatever the audio. ``calls`` counts the transcriptions."""
+
+    def __init__(self, texts: list[str] | None = None, fixed: list | None = None):
+        self.texts = list(texts or [])
+        self.fixed = fixed
+        self.calls = 0
+
+    def __call__(self, path, language, model):
+        from .recognition import Word
+        self.calls += 1
+        if self.fixed is not None:
+            return list(self.fixed)
+        info = sf.info(str(path))
+        duration = info.frames / info.samplerate
+        candidates = [t.split() for t in self.texts]
+        if len(candidates) > 1:
+            candidates.append([w for c in candidates for w in c])
+        if not candidates:
+            return []
+        words = min(candidates, key=lambda c: abs(len(c) * SECONDS_PER_WORD - duration))
+        step = duration / max(len(words), 1)
+        return [Word(w, i * step, (i + 1) * step) for i, w in enumerate(words)]
+
+
+@pytest.fixture
+def fake_whisper(monkeypatch):
+    """Replace the local recognition engine by a ``FakeWhisper`` (set ``.texts`` or ``.fixed`` in the test)."""
+    from . import recognition
+    fake = FakeWhisper()
+    monkeypatch.setattr(recognition, "local_engine", fake)
+    return fake

@@ -19,3 +19,6 @@ bench/
 *-artifact.tar.gz
 .flash/
 .runpod/
+voice-reference/candidates/
+voice-reference/costs.jsonl
+voice-reference/*.mp3

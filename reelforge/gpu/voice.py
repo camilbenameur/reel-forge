@@ -149,6 +149,7 @@ def split_jobs(segments: list[Segment]) -> list[list[Segment]]:
 
 class VoiceClient:
     MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-Base"
+    DESIGN_MODEL = "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign"
 
     def __init__(self, client: GPUClient | None = None, *, function: str = "voice", design_function: str = "voice_design",
                  reel_dir: Path | None = None, step: str = "voice", check_budget: bool = True):
