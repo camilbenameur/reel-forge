@@ -1,0 +1,857 @@
+{
+  "version": 1,
+  "source": "registre",
+  "scenes": [
+    {
+      "type": "api-hub",
+      "description": "A central card wired by cables to service cards (up to 5) that go from \"missing\" to checked: shows a tool plugging into several APIs.",
+      "exampleProps": {
+        "hub": {
+          "title": "Your agent",
+          "sub": "one single entry point"
+        },
+        "services": [
+          {
+            "name": "Google",
+            "detail": "results ok"
+          },
+          {
+            "name": "Scraping",
+            "detail": "pages ok"
+          },
+          {
+            "name": "YouTube",
+            "detail": "videos ok"
+          },
+          {
+            "name": "AI",
+            "detail": "text ok"
+          }
+        ],
+        "missingLabel": "missing"
+      },
+      "cues": [
+        "hub"
+      ]
+    },
+    {
+      "type": "app-window",
+      "description": "Application window (light) or dark terminal with a title bar, text lines typed out on their word, and an optional input bar and step badge. Use it to show a tool, a command or a configuration.",
+      "exampleProps": {
+        "title": "ai-video — terminal",
+        "variant": "terminal",
+        "lines": [
+          {
+            "text": "Checking your setup…",
+            "tone": "muted",
+            "cue": "line1"
+          },
+          {
+            "text": "Node.js    v22.11  OK",
+            "tone": "ok",
+            "prefix": ">",
+            "cue": "line2"
+          },
+          {
+            "text": "ffmpeg     ready   OK",
+            "tone": "ok",
+            "prefix": ">",
+            "cue": "line3"
+          },
+          {
+            "text": "Cloned voice: to configure",
+            "tone": "accent",
+            "prefix": ">",
+            "cue": "line4"
+          }
+        ],
+        "prompt": "What do you want to create?",
+        "badge": 2
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "arrow-annotate",
+      "description": "Large sentence in which one word is circled, underlined or highlighted with a marker (stroke that draws itself), with an arrow and a handwritten note: draw the eye to the key word, \"look at this\".",
+      "exampleProps": {
+        "before": "The real secret is",
+        "word": "consistency",
+        "after": "not talent.",
+        "note": "every single day",
+        "shape": "circle"
+      },
+      "cues": [
+        "card",
+        "stroke",
+        "arrow"
+      ]
+    },
+    {
+      "type": "big-number",
+      "description": "Giant Anton number that counts up to its value, with an italic serif suffix, a caption and a small rising or falling arrow. Use it for a striking statistic, a measured result, a view or follower count.",
+      "exampleProps": {
+        "value": 2396686,
+        "suffix": "views",
+        "caption": "on a single reel",
+        "arrow": "up",
+        "countDuration": 1.4
+      },
+      "cues": [
+        "enter",
+        "caption"
+      ]
+    },
+    {
+      "type": "browser-page",
+      "description": "Web page in a browser window (typed URL, title, button, cards) with a cursor that clicks then scrolls: present a website, an online tool, a sales page.",
+      "exampleProps": {
+        "url": "reelforge.example/try",
+        "title": "One reel a day",
+        "subtitle": "without ever filming",
+        "button": "Try it",
+        "cards": [
+          {
+            "title": "Voice"
+          },
+          {
+            "title": "Scenes"
+          },
+          {
+            "title": "Render"
+          }
+        ],
+        "cueClick": "click"
+      },
+      "cues": [
+        "window",
+        "click"
+      ]
+    },
+    {
+      "type": "calendar",
+      "description": "Calendar page \"TODAY OCT 17\": the previous day's sheet turns, today's date appears, then days get checked one by one.",
+      "exampleProps": {
+        "month": "OCT",
+        "year": "2026",
+        "day": 17,
+        "label": "TODAY",
+        "firstWeekday": 3,
+        "daysInMonth": 31,
+        "checkedDays": [
+          {
+            "day": 14
+          },
+          {
+            "day": 15
+          },
+          {
+            "day": 16
+          }
+        ]
+      },
+      "cues": [
+        "page",
+        "turn",
+        "label"
+      ]
+    },
+    {
+      "type": "chart-bars",
+      "description": "Comparative bars that grow one by one with their value, one bar highlighted in the accent color and a \"×4\" bubble: compare numbers, show a gap.",
+      "exampleProps": {
+        "title": "views per reel",
+        "unit": "views",
+        "bars": [
+          {
+            "label": "month 1",
+            "value": 320
+          },
+          {
+            "label": "month 2",
+            "value": 540
+          },
+          {
+            "label": "month 3",
+            "value": 910
+          },
+          {
+            "label": "month 4",
+            "value": 3800,
+            "highlight": true
+          }
+        ],
+        "bubble": "×4"
+      },
+      "cues": [
+        "card",
+        "bubble"
+      ]
+    },
+    {
+      "type": "chat-claude",
+      "description": "AI chat interface (\"What do you want to build?\"): the message is typed and sent, then the reply unrolls steps that get checked (Script, Voice, Scenes). Use it to describe a request made to an assistant and what it produces.",
+      "exampleProps": {
+        "title": "What do you want to build?",
+        "message": "Make me a reel about McDonald’s and real estate.",
+        "intro": "On it:",
+        "steps": [
+          {
+            "text": "Script",
+            "detail": "45 s",
+            "cue": "step1"
+          },
+          {
+            "text": "Voice",
+            "detail": "cloned",
+            "cue": "step2"
+          },
+          {
+            "text": "Scenes",
+            "detail": "12 shots",
+            "cue": "step3"
+          }
+        ],
+        "model": "Pro"
+      },
+      "cues": [
+        "enter",
+        "message",
+        "send"
+      ]
+    },
+    {
+      "type": "checklist",
+      "description": "Checklist with a title and a 0/4 counter: each box gets checked on its word, and an item can be struck through. Use it to list conditions, prerequisites or things to do or to stop doing.",
+      "exampleProps": {
+        "title": "Before publishing",
+        "items": [
+          {
+            "text": "A hook in 1 second",
+            "cue": "box1"
+          },
+          {
+            "text": "A single idea",
+            "cue": "box2"
+          },
+          {
+            "text": "Readable captions",
+            "cue": "box3"
+          },
+          {
+            "text": "Filming everything yourself",
+            "cue": "box4",
+            "struck": true
+          }
+        ]
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "code-snippet",
+      "description": "Code block with syntax coloring whose lines are typed one by one, some highlighted: show a command, a script, a technical prompt.",
+      "exampleProps": {
+        "file": "voice.py",
+        "lines": [
+          {
+            "text": "# clone my voice in ten seconds"
+          },
+          {
+            "text": "import reelforge"
+          },
+          {
+            "text": "voice = reelforge.clone(\"voice.wav\")"
+          },
+          {
+            "text": "reel = reelforge.make(topic, voice)",
+            "highlight": true
+          },
+          {
+            "text": "print(\"ready in\", 38, \"seconds\")"
+          }
+        ],
+        "speed": 46
+      },
+      "cues": [
+        "window"
+      ]
+    },
+    {
+      "type": "comment-cta",
+      "description": "Comment box where the call-to-action keyword is typed letter by letter, then the cursor clicks Post and the comment appears. Use it for the end of the reel: \"comment SKILL to get the link\".",
+      "exampleProps": {
+        "word": "SKILL",
+        "placeholder": "Add a comment…",
+        "button": "Post",
+        "username": "your.account",
+        "title": "Comments",
+        "total": "1,204",
+        "existing": [
+          {
+            "author": "julie.m",
+            "text": "I want the same one!"
+          },
+          {
+            "author": "thomas",
+            "text": "How do you do that?"
+          }
+        ]
+      },
+      "cues": [
+        "enter",
+        "word",
+        "click"
+      ]
+    },
+    {
+      "type": "corkboard",
+      "description": "Cork board with annotated polaroids, pushpins, red yarn, a yellow \"AI?\" sticky note and a magnifier: investigation, clues, \"what if it was AI?\".",
+      "exampleProps": {
+        "title": "the case file",
+        "photos": [
+          {
+            "caption": "before",
+            "variant": "city"
+          },
+          {
+            "caption": "the spark",
+            "variant": "portrait"
+          },
+          {
+            "caption": "after",
+            "variant": "hills"
+          }
+        ],
+        "note": "AI?",
+        "magnifier": true,
+        "magnifierOn": 1
+      },
+      "cues": [
+        "board",
+        "yarn",
+        "note",
+        "magnifier"
+      ]
+    },
+    {
+      "type": "cursor-click",
+      "description": "A mouse cursor follows a smooth path to a big button, clicks (ripple, press effect) and the button switches to a \"done\" state. Use it for \"click here\", launching an action, showing that a step gets triggered.",
+      "exampleProps": {
+        "title": "New video",
+        "button": "Generate",
+        "result": "Generated",
+        "secondary": [
+          "Import a script",
+          "Pick a voice"
+        ]
+      },
+      "cues": [
+        "enter",
+        "start",
+        "click"
+      ]
+    },
+    {
+      "type": "envelope",
+      "description": "Wax-sealed envelope whose seal breaks and flap opens to pull out a \"HOW?\" letter: introduces a question or a revealed secret.",
+      "exampleProps": {
+        "question": "HOW?",
+        "lines": [
+          "",
+          "",
+          ""
+        ],
+        "seal": "C",
+        "label": "CONFIDENTIAL"
+      },
+      "cues": [
+        "envelope",
+        "open"
+      ]
+    },
+    {
+      "type": "folder",
+      "description": "Blue folder that opens and lets files or cards (\"SKILL.md\", \"script.md\"...) pop out and fan out. Use it to talk about a project folder, a skill, a file library or a downloadable kit.",
+      "exampleProps": {
+        "name": "ai-video",
+        "files": [
+          {
+            "name": "SKILL.md",
+            "detail": "the brain",
+            "type": "skill",
+            "cue": "file1"
+          },
+          {
+            "name": "voice.wav",
+            "detail": "your cloned voice",
+            "type": "doc",
+            "cue": "file2"
+          },
+          {
+            "name": "scenes/",
+            "detail": "16 templates",
+            "type": "folder",
+            "cue": "file3"
+          }
+        ]
+      },
+      "cues": [
+        "enter",
+        "open"
+      ]
+    },
+    {
+      "type": "halftone-burst",
+      "description": "Burst or wave of halftone dots that invades the whole screen, with an optional punch word in the center. Use it as a strong transition or to emphasize a reveal, a \"boom\", a key moment.",
+      "exampleProps": {
+        "pattern": "burst",
+        "color": "accent",
+        "word": "BOOM",
+        "center": {
+          "x": 0.5,
+          "y": 0.42
+        }
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "icon-row",
+      "description": "Row of drawn tool icons (mic, film, brush, gear, magnifier, file, text, player) that appear one by one with their label: list tools, steps, capabilities.",
+      "exampleProps": {
+        "tools": [
+          {
+            "icon": "mic",
+            "label": "Voice",
+            "sub": "cloned"
+          },
+          {
+            "icon": "brush",
+            "label": "Animate",
+            "sub": "mascot"
+          },
+          {
+            "icon": "text",
+            "label": "Captions",
+            "sub": "word by word"
+          },
+          {
+            "icon": "film",
+            "label": "Render",
+            "sub": "1080×1920"
+          }
+        ]
+      }
+    },
+    {
+      "type": "keys",
+      "description": "Keyring of labeled API keys with a ×N badge (keyring variant), or a single golden key that unlocks cards (golden variant): \"one key for everything\".",
+      "exampleProps": {
+        "variant": "keyring",
+        "title": "your API keys",
+        "keys": [
+          {
+            "label": "Voice",
+            "detail": "api #1"
+          },
+          {
+            "label": "Images",
+            "detail": "api #2"
+          },
+          {
+            "label": "Text",
+            "detail": "api #3"
+          },
+          {
+            "label": "Video",
+            "detail": "api #4"
+          }
+        ],
+        "multiplier": 4
+      },
+      "cues": [
+        "ring",
+        "multiplier",
+        "key"
+      ]
+    },
+    {
+      "type": "loading-bar",
+      "description": "Progress bar with a large rising percentage and a list of steps checked one by one, final stamp: work that gets done by itself, the steps of a production.",
+      "exampleProps": {
+        "title": "reel production",
+        "steps": [
+          {
+            "label": "Script written"
+          },
+          {
+            "label": "Voice cloned"
+          },
+          {
+            "label": "Scenes animated"
+          },
+          {
+            "label": "Final render"
+          }
+        ],
+        "final": "READY"
+      },
+      "cues": [
+        "card"
+      ]
+    },
+    {
+      "type": "phone",
+      "description": "Slightly tilted phone whose screen shows a reel (caption, views), a conversation (bubbles) or notifications. Use it to talk about a post, a message, a notification or content consumed on mobile.",
+      "exampleProps": {
+        "screen": "reel",
+        "tilt": -6,
+        "caption": "McDonald's is not a burger company.",
+        "keyword": "burger",
+        "author": "your.account",
+        "views": 2396686,
+        "likes": "12.4k",
+        "contact": "Julie",
+        "messages": [
+          {
+            "from": "them",
+            "text": "Did you see this reel?",
+            "cue": "msg1"
+          },
+          {
+            "from": "me",
+            "text": "Yes, it's crazy.",
+            "cue": "msg2"
+          }
+        ],
+        "notifications": [
+          {
+            "app": "Instagram",
+            "title": "the account posted a reel",
+            "text": "Watch it now",
+            "cue": "notif1"
+          },
+          {
+            "app": "Studio",
+            "title": "Your reel is ready",
+            "text": "Render finished in 3 min",
+            "cue": "notif2"
+          }
+        ]
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "price-tag",
+      "description": "Hanging price tag (or perforated ticket with barcode) that drops in, swings and shows \"$9\" or \"FREE\", with an optional struck-through original price: talk about a cost or something free.",
+      "exampleProps": {
+        "variant": "tag",
+        "price": "$9",
+        "oldPrice": "$49",
+        "note": "per month",
+        "heading": "PRICE"
+      },
+      "cues": [
+        "price",
+        "strike",
+        "stamp"
+      ]
+    },
+    {
+      "type": "question-mark",
+      "description": "Giant red and black extruded question mark with a condensed uppercase word (\"WHY?\"): asks a fundamental question, a doubt, a mystery.",
+      "exampleProps": {
+        "word": "WHY?",
+        "symbol": "?"
+      },
+      "cues": [
+        "symbol",
+        "word"
+      ]
+    },
+    {
+      "type": "quote-card",
+      "description": "Quote card in curly quotes, in serif, with words appearing one by one, a mono source line and one word highlighted with a yellow marker. Use it to quote someone, a punchy sentence or a misconception worth remembering.",
+      "exampleProps": {
+        "quote": "Price is what you pay. Value is what you get.",
+        "source": "Warren Buffett",
+        "highlight": "Value"
+      },
+      "cues": [
+        "enter",
+        "highlight"
+      ]
+    },
+    {
+      "type": "retention-graph",
+      "description": "Retention chart: the \"most reels\" curve collapses while \"my reel\" holds close to 100%, with a playback cursor and video thumbnails. Use it to talk about retention, audience loyalty or drop-off.",
+      "exampleProps": {
+        "title": "retention",
+        "averageLabel": "Most reels",
+        "ownLabel": "My reel",
+        "duration": 45,
+        "drop": "−92%",
+        "hold": "94%"
+      },
+      "cues": [
+        "enter",
+        "average",
+        "own",
+        "cursor"
+      ]
+    },
+    {
+      "type": "stack-cards",
+      "description": "Stack of numbered cards or documents that drop onto each other then fan out: several options, several formats, \"something for every taste\".",
+      "exampleProps": {
+        "cards": [
+          {
+            "title": "Hook",
+            "sub": "one second",
+            "tag": "step"
+          },
+          {
+            "title": "Script",
+            "sub": "short",
+            "tag": "step"
+          },
+          {
+            "title": "Voice",
+            "sub": "cloned",
+            "tag": "step"
+          },
+          {
+            "title": "Scenes",
+            "sub": "animated",
+            "tag": "step"
+          },
+          {
+            "title": "Render",
+            "sub": "in 4K",
+            "tag": "final"
+          }
+        ]
+      },
+      "cues": [
+        "fan"
+      ]
+    },
+    {
+      "type": "step-card",
+      "description": "Numbered step card: black square badge, big condensed uppercase title (\"HOOK IN 1 SEC\"), subtitle and an optional mini-illustration. Use it when the script announces \"step 1\", a rule or a named principle.",
+      "exampleProps": {
+        "number": 1,
+        "title": "HOOK IN 1 SEC",
+        "subtitle": "The first seconds decide everything.",
+        "label": "// step 1",
+        "illustration": "clock",
+        "cueIllustration": "illustration"
+      },
+      "cues": [
+        "enter",
+        "illustration"
+      ]
+    },
+    {
+      "type": "step-grid",
+      "description": "Grid of 2 to 6 numbered cards (\"6 STEPS\") that light up one by one on the word of each step, with a counter. Use it for a plan, a recap or a list of enumerated steps.",
+      "exampleProps": {
+        "title": "6 STEPS",
+        "cards": [
+          {
+            "title": "Hook in 1 sec",
+            "cue": "step1"
+          },
+          {
+            "title": "Short script",
+            "cue": "step2"
+          },
+          {
+            "title": "Cloned voice",
+            "cue": "step3"
+          },
+          {
+            "title": "Animated scenes",
+            "cue": "step4"
+          },
+          {
+            "title": "Captions",
+            "cue": "step5"
+          },
+          {
+            "title": "Publishing",
+            "cue": "step6"
+          }
+        ]
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "stop-stamp",
+      "description": "An item (camera, document, bell, dollar) hit by a big red STOP / ERROR / NO stamp with a screen shake. Use it to reject a practice, a common mistake or a \"never do this\".",
+      "exampleProps": {
+        "item": {
+          "title": "Filming every reel",
+          "subtitle": "3 hours per video",
+          "icon": "camera"
+        },
+        "stamp": "STOP"
+      },
+      "cues": [
+        "enter",
+        "stamp"
+      ]
+    },
+    {
+      "type": "timeline-steps",
+      "description": "Horizontal timeline of milestones (D1, D7, D14, D30...) linked by an advancing progress line: a journey over time, the steps of a challenge.",
+      "exampleProps": {
+        "milestones": [
+          {
+            "label": "D1",
+            "title": "First reel",
+            "detail": "0 followers"
+          },
+          {
+            "label": "D7",
+            "title": "First spike",
+            "detail": "1,200 views"
+          },
+          {
+            "label": "D14",
+            "title": "Routine",
+            "detail": "one a day"
+          },
+          {
+            "label": "D30",
+            "title": "The result",
+            "detail": "2,900 followers"
+          }
+        ]
+      }
+    },
+    {
+      "type": "toggle",
+      "description": "Settings card whose switches flip to orange/green, one of them enlarged with an \"ENABLED\" stamp: turn on an option, a mode, a hidden trick.",
+      "exampleProps": {
+        "title": "Settings",
+        "rows": [
+          {
+            "label": "Notifications",
+            "hint": "all the time"
+          },
+          {
+            "label": "Agent mode",
+            "hint": "the right setting",
+            "focus": true
+          },
+          {
+            "label": "Auto-save",
+            "hint": "every 5 min"
+          }
+        ],
+        "stamp": "ENABLED"
+      },
+      "cues": [
+        "card",
+        "stamp"
+      ]
+    },
+    {
+      "type": "versus",
+      "description": "Before / after (or old / new) comparison in two columns: struck-through lines with a red cross on the left, lines with a black check mark on the right, orange-red header, VS badge in the middle. Use it to contrast two methods, two results or a before and an after.",
+      "exampleProps": {
+        "left": {
+          "title": "Before",
+          "lines": [
+            {
+              "text": "Filming for 3 hours",
+              "cue": "l1"
+            },
+            {
+              "text": "Editing by hand",
+              "cue": "l2"
+            },
+            {
+              "text": "1 reel per week",
+              "cue": "l3"
+            }
+          ]
+        },
+        "right": {
+          "title": "After",
+          "lines": [
+            {
+              "text": "One written idea",
+              "cue": "r1"
+            },
+            {
+              "text": "Automatic render",
+              "cue": "r2"
+            },
+            {
+              "text": "1 reel per day",
+              "cue": "r3"
+            }
+          ]
+        }
+      },
+      "cues": [
+        "enter"
+      ]
+    },
+    {
+      "type": "view-counter",
+      "description": "Insights-style stats card: climbing view count, rising curve that draws itself, period, change and small tiles. Use it to show growth, audience results or a numeric proof.",
+      "exampleProps": {
+        "label": "Views",
+        "value": 2396686,
+        "period": "Last 30 days",
+        "tabs": [
+          "7d",
+          "30d",
+          "90d"
+        ],
+        "active": 1,
+        "delta": "+312%",
+        "curve": [
+          4,
+          5,
+          5,
+          7,
+          6,
+          9,
+          12,
+          11,
+          18,
+          26,
+          41,
+          63,
+          100
+        ],
+        "tiles": [
+          {
+            "label": "followers",
+            "value": "+1,204"
+          },
+          {
+            "label": "shares",
+            "value": "38.2k"
+          }
+        ]
+      },
+      "cues": [
+        "enter",
+        "curve"
+      ]
+    }
+  ]
+}
