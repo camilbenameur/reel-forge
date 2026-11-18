@@ -7,7 +7,7 @@ name = "reelforge"
 version = "0.1.0"
 description = "Turn a brief into a vertical short video: script, cloned voice, timeline, Remotion render, QA."
 requires-python = ">=3.11"
-dependencies = ["numpy", "soundfile"]
+dependencies = ["numpy", "soundfile", "pyyaml"]
 
 [project.optional-dependencies]
 deploy = ["runpod>=2.3"]

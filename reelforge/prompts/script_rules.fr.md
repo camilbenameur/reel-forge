@@ -1,0 +1,4 @@
+- Write in natural spoken French, informal "tu" address.
+- NUMBERS are written in WORDS ("quarante-deux", "deux mille vingt-six", "trois fois"), because the voice reads them and the beat text is also the caption: no digits, no "%" and no "€" (write "pour cent", "euros").
+- French typography: narrow no-break space (U+202F) before "? ! ;" and no-break space (U+00A0) before ":" and inside French guillemets « ». Straight ' or typographic ’ apostrophe, used consistently.
+- No needless anglicisms; tool names stay as they are.

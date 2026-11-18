@@ -1,0 +1,156 @@
+{
+  "title": "Pourquoi neuf réels sur dix meurent en une seconde",
+  "topic": "Réussir la première seconde d'un réel",
+  "language": "fr",
+  "cta_word": "GUIDE",
+  "caption": "Neuf réels sur dix meurent dans la première seconde. Voici la méthode en trois étapes pour garder ton public.\nCommente GUIDE et je t'envoie ma checklist.",
+  "hashtags": [
+    "#reels",
+    "#montage",
+    "#contentcreator",
+    "#hook",
+    "#retention"
+  ],
+  "beats": [
+    {
+      "text": "Neuf réels sur dix *meurent* dans la première seconde !",
+      "section": "01 — le hook",
+      "scene": {
+        "type": "stop-stamp",
+        "props": {
+          "item": {
+            "title": "Intros lentes",
+            "subtitle": "perdues en une seconde",
+            "icon": "camera"
+          },
+          "stamp": "STOP"
+        },
+        "cues": {
+          "stamp": "meurent"
+        }
+      },
+      "pose": "point-up",
+      "expression": "surprised"
+    },
+    {
+      "text": "Pourquoi ? Parce que tu commences par te présenter. Le cerveau de ton spectateur décide en une seconde s'il reste ou s'il file.",
+      "section": "02 — le problème",
+      "scene": {
+        "type": "retention-graph",
+        "props": {
+          "title": "rétention",
+          "averageLabel": "La plupart des réels",
+          "ownLabel": "Ton réel",
+          "duration": 45,
+          "drop": "−92 %",
+          "hold": "94 %"
+        },
+        "cues": {
+          "average": "file"
+        }
+      },
+      "pose": "facepalm",
+      "expression": "skeptical"
+    },
+    {
+      "text": "Voici la méthode. Un : ouvre sur le *résultat*, pas sur toi. Deux : une image qui bouge dès le premier mot. Trois : une promesse tenue avant la fin.",
+      "section": "03 — la méthode",
+      "counter": {
+        "label": "ÉTAPES",
+        "value": "3"
+      },
+      "scene": {
+        "type": "step-card",
+        "props": {
+          "number": 1,
+          "title": "HOOK EN 1 SEC",
+          "subtitle": "Les premières secondes décident de tout.",
+          "label": "// étape 1",
+          "illustration": "clock"
+        },
+        "cues": {
+          "enter": "Un",
+          "illustration": "Deux"
+        }
+      },
+      "pose": "point-scene",
+      "expression": "smile"
+    },
+    {
+      "text": "Résultat ? Mes vidéos gardent deux fois plus de monde jusqu'à la fin. Et ça, c'est *mesurable*.",
+      "section": "04 — le résultat",
+      "theme": "night",
+      "scene": {
+        "type": "big-number",
+        "props": {
+          "value": 2,
+          "suffix": "x",
+          "caption": "de spectateurs en plus à la fin",
+          "arrow": "up",
+          "countDuration": 1.4
+        },
+        "cues": {
+          "enter": "deux",
+          "caption": "mesurable"
+        }
+      },
+      "pose": "celebrate",
+      "expression": "laugh"
+    },
+    {
+      "text": "Dernier détail : coupe chaque silence. Un réel vivant, c'est un réel où rien ne reste *immobile* plus d'une demi-seconde.",
+      "section": "05 — un dernier mot",
+      "scene": {
+        "type": "folder",
+        "props": {
+          "name": "mon-reel",
+          "files": [
+            {
+              "name": "hook.md",
+              "detail": "une seconde",
+              "type": "doc",
+              "cue": "file1"
+            },
+            {
+              "name": "scenes/",
+              "detail": "une par idée",
+              "type": "folder",
+              "cue": "file2"
+            }
+          ]
+        },
+        "cues": {
+          "open": "coupe"
+        }
+      },
+      "pose": "thinking",
+      "expression": "neutral"
+    },
+    {
+      "text": "Teste ça sur ton prochain réel, et dis-moi ce qui change. Commente *GUIDE* et je t'envoie ma checklist.",
+      "section": "06 — à toi",
+      "scene": {
+        "type": "comment-cta",
+        "props": {
+          "word": "GUIDE",
+          "placeholder": "Ajouter un commentaire…",
+          "button": "Publier",
+          "username": "ton.compte",
+          "title": "Commentaires",
+          "total": "1 204",
+          "existing": [
+            {
+              "author": "julie.m",
+              "text": "Je veux le même !"
+            }
+          ]
+        },
+        "cues": {
+          "word": "Commente"
+        }
+      },
+      "pose": "point-down",
+      "expression": "wink"
+    }
+  ]
+}

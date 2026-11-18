@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reelforge/script.schema.json",
+  "title": "Reel script",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "topic", "cta_word", "caption", "hashtags", "beats"],
+  "properties": {
+    "title": {"type": "string", "minLength": 3, "maxLength": 120},
+    "topic": {"type": "string", "minLength": 3},
+    "language": {"enum": ["en", "fr"], "description": "Set by the tool after generation, not by the model."},
+    "cta_word": {"type": "string", "pattern": "^[A-Z0-9À-ÖØ-Þ]{2,20}$", "description": "Word to comment, capitals, no space."},
+    "caption": {"type": "string", "minLength": 10, "maxLength": 1800},
+    "hashtags": {"type": "array", "minItems": 3, "maxItems": 10, "items": {"type": "string", "pattern": "^#[^ ]+$"}},
+    "beats": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "section", "scene", "pose", "expression"],
+        "properties": {
+          "text": {"type": "string", "minLength": 3, "description": "Spoken text, keywords between *asterisks*, numbers in words."},
+          "section": {"type": "string", "minLength": 2, "maxLength": 40, "description": "Section label, e.g. \"01 — the hook\"."},
+          "counter": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "value"],
+            "properties": {"label": {"type": "string", "maxLength": 24}, "value": {"type": "string", "maxLength": 12}}
+          },
+          "scene": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "props"],
+            "properties": {
+              "type": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+              "props": {"type": "object"},
+              "cues": {"type": "object", "additionalProperties": {"type": "string", "minLength": 1}}
+            }
+          },
+          "pose": {"enum": ["neutral", "point-up", "point-scene", "wave", "thumbs-up", "thinking", "facepalm", "arms-open", "celebrate", "point-down", "point-self"]},
+          "expression": {"enum": ["neutral", "smile", "surprised", "skeptical", "laugh", "wink"]},
+          "theme": {"enum": ["paper", "night"]}
+        }
+      }
+    }
+  }
+}

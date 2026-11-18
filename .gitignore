@@ -7,6 +7,7 @@ __pycache__/
 studio/node_modules/
 studio/public/reels/
 studio/out/
+brand/brand.yaml
 reels/*/*.wav
 reels/*/*.mp4
 reels/*/*.jpg

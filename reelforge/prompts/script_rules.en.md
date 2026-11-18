@@ -1,0 +1,2 @@
+- NUMBERS are written in WORDS ("forty-two", "two thousand twenty-six", "three times"), because the voice reads them and the beat text is also the caption: no digits, no "%" and no currency sign (write "percent", "dollars").
+- Plain English typography: no space before , . ; : ? !, straight or curly apostrophes used consistently, an ellipsis as the single character U+2026.

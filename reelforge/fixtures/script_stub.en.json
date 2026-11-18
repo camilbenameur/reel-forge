@@ -1,0 +1,156 @@
+{
+  "title": "Why nine reels out of ten die in one second",
+  "topic": "Nailing the first second of a reel",
+  "language": "en",
+  "cta_word": "GUIDE",
+  "caption": "Nine reels out of ten die in the first second. Here is the three-step method to keep your audience.\nComment GUIDE and I send you my checklist.",
+  "hashtags": [
+    "#reels",
+    "#editing",
+    "#contentcreator",
+    "#hook",
+    "#retention"
+  ],
+  "beats": [
+    {
+      "text": "Nine reels out of ten *die* in the first second!",
+      "section": "01 — the hook",
+      "scene": {
+        "type": "stop-stamp",
+        "props": {
+          "item": {
+            "title": "Slow intros",
+            "subtitle": "gone in one second",
+            "icon": "camera"
+          },
+          "stamp": "STOP"
+        },
+        "cues": {
+          "stamp": "die"
+        }
+      },
+      "pose": "point-up",
+      "expression": "surprised"
+    },
+    {
+      "text": "Why? Because you start by introducing yourself. Your viewer's brain decides within one second whether to stay or to swipe away.",
+      "section": "02 — the problem",
+      "scene": {
+        "type": "retention-graph",
+        "props": {
+          "title": "retention",
+          "averageLabel": "Most reels",
+          "ownLabel": "Your reel",
+          "duration": 45,
+          "drop": "−92%",
+          "hold": "94%"
+        },
+        "cues": {
+          "average": "swipe"
+        }
+      },
+      "pose": "facepalm",
+      "expression": "skeptical"
+    },
+    {
+      "text": "Here is the method. One: open on the *result*, not on yourself. Two: an image that moves from the first word. Three: a promise kept before the end.",
+      "section": "03 — the method",
+      "counter": {
+        "label": "STEPS",
+        "value": "3"
+      },
+      "scene": {
+        "type": "step-card",
+        "props": {
+          "number": 1,
+          "title": "HOOK IN 1 SEC",
+          "subtitle": "The first seconds decide everything.",
+          "label": "// step 1",
+          "illustration": "clock"
+        },
+        "cues": {
+          "enter": "One",
+          "illustration": "Two"
+        }
+      },
+      "pose": "point-scene",
+      "expression": "smile"
+    },
+    {
+      "text": "The result? My videos keep twice as many people until the end. And that is *measurable*.",
+      "section": "04 — the result",
+      "theme": "night",
+      "scene": {
+        "type": "big-number",
+        "props": {
+          "value": 2,
+          "suffix": "x",
+          "caption": "more viewers at the end",
+          "arrow": "up",
+          "countDuration": 1.4
+        },
+        "cues": {
+          "enter": "twice",
+          "caption": "measurable"
+        }
+      },
+      "pose": "celebrate",
+      "expression": "laugh"
+    },
+    {
+      "text": "One last detail: cut every silence. A lively reel is one where nothing stays *still* for more than half a second.",
+      "section": "05 — one more thing",
+      "scene": {
+        "type": "folder",
+        "props": {
+          "name": "my-reel",
+          "files": [
+            {
+              "name": "hook.md",
+              "detail": "one second",
+              "type": "doc",
+              "cue": "file1"
+            },
+            {
+              "name": "scenes/",
+              "detail": "one per idea",
+              "type": "folder",
+              "cue": "file2"
+            }
+          ]
+        },
+        "cues": {
+          "open": "cut"
+        }
+      },
+      "pose": "thinking",
+      "expression": "neutral"
+    },
+    {
+      "text": "Try this on your next reel and tell me what changes. Comment *GUIDE* and I send you my checklist.",
+      "section": "06 — your turn",
+      "scene": {
+        "type": "comment-cta",
+        "props": {
+          "word": "GUIDE",
+          "placeholder": "Add a comment…",
+          "button": "Post",
+          "username": "your.account",
+          "title": "Comments",
+          "total": "1,204",
+          "existing": [
+            {
+              "author": "julie.m",
+              "text": "I want the same one!"
+            }
+          ]
+        },
+        "cues": {
+          "word": "Comment"
+        }
+      },
+      "pose": "point-down",
+      "expression": "wink"
+    }
+  ]
+}

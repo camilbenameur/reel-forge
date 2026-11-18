@@ -1,0 +1,22 @@
+# Copy this file to brand/brand.yaml (git-ignored) and adapt it. It is passed as is to the script writer.
+# Everything is optional: without brand/brand.yaml the writer uses a neutral, direct, friendly tone.
+
+name: Your channel name
+handle: "@yourhandle"
+audience: >
+  Who watches: their job, what they already know, what they want to get out of a 45-second video.
+voice:
+  person: second            # second ("you") or first
+  tone: direct, warm, a little playful, never salesy
+  pace: short spoken sentences, no filler
+mascot:
+  description: >
+    A flat 2D character that looks like the author; it reacts to what is said (surprise, doubt, pride).
+vocabulary:
+  keep_as_is: [Remotion, API]       # names that stay untouched
+  avoid: [synergy, game-changer]
+call_to_action:
+  style: "Comment WORD and I send it to you"
+  words: [GUIDE, TEMPLATE, CHECKLIST]  # words that fit your topics
+topics_never_to_claim:
+  - results or numbers that are not in the brief
